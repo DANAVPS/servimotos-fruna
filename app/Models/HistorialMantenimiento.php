@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\PerteneceATaller;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HistorialMantenimiento extends Model
 {
+    use PerteneceATaller;
+
     protected $table = 'historial_mantenimiento';
 
     const UPDATED_AT = null;
 
     protected $fillable = [
+        'taller_id',
         'orden_servicio_id',
         'repuesto_id',
         'fecha_cambio_repuesto',
@@ -38,10 +42,6 @@ class HistorialMantenimiento extends Model
         return $this->belongsTo(Repuesto::class);
     }
 
-    /**
-     * Pendientes de envío de recordatorio: 3 meses cumplidos y aún no notificados.
-     * Usado por el Job diario en Fase 5.
-     */
     public function scopePendientesDeRecordatorio($query)
     {
         return $query->where('plantilla_whatsapp_enviada', false)

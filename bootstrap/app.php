@@ -11,11 +11,21 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Excluir la ruta del Webhook de WhatsApp de la verificación CSRF
+        // Excepción de CSRF para el webhook de WhatsApp
         $middleware->validateCsrfTokens(except: [
             'webhook/whatsapp',
         ]);
+
+        // Aliases para middlewares
+        $middleware->alias([
+            'tenant' => \App\Http\Middleware\SetTenantContext::class,
+            'role'   => \App\Http\Middleware\EnsureRole::class,
+        ]);
+
+        // Aplicar el contexto del tenant a todas las rutas web
+        $middleware->appendToGroup('web', \App\Http\Middleware\SetTenantContext::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();

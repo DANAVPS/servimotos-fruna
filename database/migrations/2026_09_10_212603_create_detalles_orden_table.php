@@ -10,6 +10,9 @@ return new class extends Migration
     {
         Schema::create('detalles_orden', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('taller_id')->constrained('talleres')->onDelete('cascade');
+            
             $table->foreignId('orden_servicio_id')
                 ->constrained('ordenes_servicio')
                 ->onDelete('cascade');

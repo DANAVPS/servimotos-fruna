@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\PerteneceATaller;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Repuesto extends Model
 {
-    use HasFactory;
+    use HasFactory, PerteneceATaller;
 
     protected $fillable = [
         'nombre',

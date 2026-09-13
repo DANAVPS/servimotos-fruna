@@ -3,12 +3,20 @@
 namespace Database\Seeders;
 
 use App\Models\Cliente;
+use App\Models\Taller;
+use App\Support\TenantManager;
 use Illuminate\Database\Seeder;
 
 class ClienteSeeder extends Seeder
 {
     public function run(): void
     {
+        $taller = Taller::first();
+
+        if ($taller) {
+            app(TenantManager::class)->establecer($taller->id);
+        }
+
         $clientes = [
             ['nombre' => 'Carlos Andrés Pérez Gómez', 'telefono' => '+573001234567', 'estado_cliente' => 'activo'],
             ['nombre' => 'María Fernanda Rodríguez Suárez', 'telefono' => '+573109876543', 'estado_cliente' => 'activo'],
@@ -23,6 +31,7 @@ class ClienteSeeder extends Seeder
         foreach ($clientes as $data) {
             Cliente::create([
                 ...$data,
+                'taller_id' => $taller?->id,
                 'correo' => null,
                 'fecha_ultima_visita' => $data['estado_cliente'] === 'activo'
                     ? now()->subDays(rand(1, 60))

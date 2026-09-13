@@ -1,0 +1,14 @@
+[90m= [39m[34;4mApp\Models\OrdenServicio[39;24m {#7427
+    [34mid[39m: [35m1[39m,
+    [34mtaller_id[39m: [35m1[39m,
+    [34mfecha_hora_ingreso[39m: [32m"[39m[32m2026-09-13 22:08:51[39m[32m"[39m,
+    [34multima_interaccion_cliente[39m: [36mnull[39m,
+    [34mestado[39m: [32m"[39m[32men_espera_revision[39m[32m"[39m,
+    [34mdescripcion_falla[39m: [32m"[39m[32mRevisión general y mantenimiento preventivo solicitado por el cliente.[39m[32m"[39m,
+    [34mmecanico_id[39m: [36mnull[39m,
+    [34mcliente_id[39m: [35m1[39m,
+    [34mmoto_id[39m: [35m1[39m,
+    [34mtotal[39m: [32m"[39m[32m0.00[39m[32m"[39m,
+    [34mcreated_at[39m: [32m"[39m[32m2026-09-13 22:08:51[39m[32m"[39m,
+    [34mupdated_at[39m: [32m"[39m[32m2026-09-13 22:08:51[39m[32m"[39m,
+  }

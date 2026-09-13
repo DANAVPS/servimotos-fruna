@@ -2,48 +2,61 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
+        'taller_id',
+        'role_id',
         'name',
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function taller(): BelongsTo
+    {
+        return $this->belongsTo(Taller::class);
+    }
+
+    public function rol(): BelongsTo
+    {
+        return $this->belongsTo(Rol::class, 'role_id');
+    }
+
+    public function mecanico(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Mecanico::class);
+    }
+
+    public function esSuperAdmin(): bool
+    {
+        return $this->rol?->slug === Rol::SUPERADMIN;
+    }
+
+    public function esAdministradora(): bool
+    {
+        return $this->rol?->slug === Rol::ADMINISTRADORA;
+    }
+
+    public function esMecanico(): bool
+    {
+        return $this->rol?->slug === Rol::MECANICO;
     }
 }

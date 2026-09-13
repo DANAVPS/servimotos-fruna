@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Concerns\PerteneceATaller;
+
 
 class Moto extends Model
 {
-    use HasFactory;
+    use HasFactory, PerteneceATaller;
 
     protected $fillable = [
         'placa',

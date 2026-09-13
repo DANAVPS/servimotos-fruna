@@ -3,12 +3,20 @@
 namespace Database\Seeders;
 
 use App\Models\Repuesto;
+use App\Models\Taller;
+use App\Support\TenantManager;
 use Illuminate\Database\Seeder;
 
 class RepuestoSeeder extends Seeder
 {
     public function run(): void
     {
+        $taller = Taller::first();
+
+        if ($taller) {
+            app(TenantManager::class)->establecer($taller->id);
+        }
+
         $repuestos = [
             ['nombre' => 'Filtro de aceite', 'marca' => 'Yamaha', 'modelo_compatible' => 'FZ 150 / XTZ 125', 'precio_costo' => 12000, 'precio_venta' => 22000, 'stock_actual' => 15, 'stock_minimo' => 5],
             ['nombre' => 'Pastillas de freno delanteras', 'marca' => 'AKT', 'modelo_compatible' => 'NKD 125 / AK 125', 'precio_costo' => 18000, 'precio_venta' => 35000, 'stock_actual' => 3, 'stock_minimo' => 6],
@@ -19,7 +27,10 @@ class RepuestoSeeder extends Seeder
         ];
 
         foreach ($repuestos as $repuesto) {
-            Repuesto::create($repuesto);
+            Repuesto::create([
+                ...$repuesto,
+                'taller_id' => $taller?->id,
+            ]);
         }
     }
 }

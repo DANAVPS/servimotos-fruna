@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\PerteneceATaller;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DetalleOrden extends Model
 {
-    use HasFactory;
+    use HasFactory, PerteneceATaller;
 
     protected $table = 'detalles_orden';
 
     protected $fillable = [
+        'taller_id',
         'orden_servicio_id',
         'repuesto_id',
         'cantidad',

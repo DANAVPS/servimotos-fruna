@@ -4,12 +4,20 @@ namespace Database\Seeders;
 
 use App\Models\Cliente;
 use App\Models\Moto;
+use App\Models\Taller;
+use App\Support\TenantManager;
 use Illuminate\Database\Seeder;
 
 class MotoSeeder extends Seeder
 {
     public function run(): void
     {
+        $taller = Taller::first();
+
+        if ($taller) {
+            app(TenantManager::class)->establecer($taller->id);
+        }
+
         $motosPorPlaca = [
             ['placa' => 'ABC12D', 'marca' => 'Yamaha', 'modelo' => 'FZ 150', 'anio' => 2021],
             ['placa' => 'XYZ34F', 'marca' => 'AKT', 'modelo' => 'NKD 125', 'anio' => 2020],
@@ -28,6 +36,7 @@ class MotoSeeder extends Seeder
 
             Moto::create([
                 ...$data,
+                'taller_id' => $taller?->id,
                 'cliente_id' => $cliente->id,
             ]);
         }

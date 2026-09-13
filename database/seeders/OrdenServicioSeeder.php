@@ -5,12 +5,20 @@ namespace Database\Seeders;
 use App\Models\Mecanico;
 use App\Models\Moto;
 use App\Models\OrdenServicio;
+use App\Models\Taller;
+use App\Support\TenantManager;
 use Illuminate\Database\Seeder;
 
 class OrdenServicioSeeder extends Seeder
 {
     public function run(): void
     {
+        $taller = Taller::first();
+
+        if ($taller) {
+            app(TenantManager::class)->establecer($taller->id);
+        }
+
         $motos = Moto::with('cliente')->get();
         $mecanicos = Mecanico::disponible()->get();
 
@@ -29,6 +37,7 @@ class OrdenServicioSeeder extends Seeder
             $tieneMecanico = $estado !== 'en_espera_revision';
 
             OrdenServicio::create([
+                'taller_id' => $taller?->id,
                 'fecha_hora_ingreso' => now()->subDays(rand(0, 15)),
                 'estado' => $estado,
                 'descripcion_falla' => 'Revisión general y mantenimiento preventivo solicitado por el cliente.',
@@ -39,4 +48,4 @@ class OrdenServicioSeeder extends Seeder
             ]);
         }
     }
-}
+}   
