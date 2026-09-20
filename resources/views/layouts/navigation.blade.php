@@ -5,16 +5,38 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('ordenes.kanban') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <!-- Enlace corregido al Dashboard -->
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <!-- Enlace a Órdenes Kanban -->
+                    <x-nav-link :href="route('ordenes.kanban')" :active="request()->routeIs('ordenes.*')">
+                        {{ __('Órdenes') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('inventario.index')" :active="request()->routeIs('inventario.*')">
+                        {{ __('Inventario') }}
+                        @php($alertas = app(\App\Services\InventarioService::class)->repuestosConAlerta()->count())
+                        @if($alertas > 0)
+                            <span class="ms-1 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+                                {{ $alertas }}
+                            </span>
+                        @endif
+                    </x-nav-link>
+
+                    @if(auth()->user()->esAdministradora() || auth()->user()->esSuperAdmin())
+                        <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
+                            {{ __('Clientes') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -67,9 +89,29 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+            <!-- Enlace móvil corregido al Dashboard -->
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('ordenes.kanban')" :active="request()->routeIs('ordenes.*')">
+                {{ __('Órdenes') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('inventario.index')" :active="request()->routeIs('inventario.*')">
+                {{ __('Inventario') }}
+                @if($alertas > 0)
+                    <span class="ms-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+                        {{ $alertas }}
+                    </span>
+                @endif
+            </x-responsive-nav-link>
+
+            @if(auth()->user()->esAdministradora() || auth()->user()->esSuperAdmin())
+                <x-responsive-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
+                    {{ __('Clientes') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

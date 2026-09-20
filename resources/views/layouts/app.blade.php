@@ -32,5 +32,8 @@
                 {{ $slot }}
             </main>
         </div>
+
+        <!-- Scripts Dinámicos de las Vistas -->
+        @stack('scripts')
     </body>
 </html>
