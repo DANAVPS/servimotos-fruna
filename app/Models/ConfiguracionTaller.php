@@ -17,6 +17,10 @@ class ConfiguracionTaller extends Model
         'capacidad_maxima_simultanea',
         'horario_apertura',
         'horario_cierre',
+        'direccion',
+        'telefono_contacto',
+        'email_contacto',
+        'logo_path',
     ];
 
     public static function actual(): self

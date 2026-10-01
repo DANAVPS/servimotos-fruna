@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Taller extends Model
 {
+    use HasFactory;
+
     // Indicar explícitamente el nombre de la tabla en español
     protected $table = 'talleres';
 
@@ -44,8 +47,18 @@ class Taller extends Model
         return $this->hasMany(Cliente::class);
     }
 
+    public function categoriasRepuesto(): HasMany
+    {
+        return $this->hasMany(CategoriaRepuesto::class);
+    }
+
+    public function tiposCliente(): HasMany
+    {
+        return $this->hasMany(TipoCliente::class);
+    }
+
     public function configuracion(): HasOne
     {
         return $this->hasOne(ConfiguracionTaller::class);
     }
-}   
+}

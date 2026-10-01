@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -20,13 +21,14 @@ class User extends Authenticatable
         'password',
     ];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token', 'pin_autorizacion'];
 
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'pin_autorizacion' => 'hashed',
         ];
     }
 
@@ -53,6 +55,29 @@ class User extends Authenticatable
     public function esAdministradora(): bool
     {
         return $this->rol?->slug === Rol::ADMINISTRADORA;
+    }
+
+    /**
+     * Administradora o SuperAdmin: quienes gestionan precios, inventario,
+     * distribuidores y dinero.
+     */
+    public function esAdministrativo(): bool
+    {
+        return $this->esSuperAdmin() || $this->esAdministradora();
+    }
+
+    public function tienePinConfigurado(): bool
+    {
+        return ! empty($this->pin_autorizacion);
+    }
+
+    /**
+     * Solo compara. El conteo de intentos y la auditoría viven en
+     * AutorizacionService: usa ese servicio, no este método, en los controladores.
+     */
+    public function verificarPin(string $pin): bool
+    {
+        return $this->tienePinConfigurado() && Hash::check($pin, $this->pin_autorizacion);
     }
 
     public function esMecanico(): bool

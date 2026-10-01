@@ -1,87 +1,133 @@
+@php
+    $puedeCrear = auth()->user()->can('create', App\Models\Cliente::class);
+    $filtrando = request()->filled('buscar') || request()->filled('estado') || request()->filled('tipo_cliente_id');
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="text-xl font-semibold text-gray-800">Clientes</h2>
-            <a href="{{ route('clientes.create') }}"
-               class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
-                + Nuevo cliente
-            </a>
+            <div class="flex flex-wrap gap-2">
+                @can('viewAny', App\Models\TipoCliente::class)
+                    <a href="{{ route('tipos-cliente.index') }}"
+                       class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Tipos de cliente
+                    </a>
+                @endcan
+                @if($puedeCrear)
+                    <a href="{{ route('clientes.create') }}"
+                       class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                        + Nuevo cliente
+                    </a>
+                @endif
+            </div>
         </div>
     </x-slot>
 
     <div class="py-6">
-        <div class="mx-auto max-w-6xl sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-6xl space-y-4 sm:px-6 lg:px-8">
 
             @if(session('status'))
-                <div class="mb-4 rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
+                <div class="rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
             @endif
 
-            <div class="mb-4 rounded-lg bg-white p-4 shadow-sm">
+            <div class="rounded-lg bg-white p-4 shadow-sm">
                 <form method="GET" class="flex flex-wrap items-end gap-3">
-                    <div class="flex-1 min-w-[200px]">
-                        <label class="block text-sm font-medium text-gray-700">Buscar</label>
-                        <input type="text" name="buscar" value="{{ request('buscar') }}"
-                               placeholder="Nombre o teléfono..."
+                    <div class="min-w-[220px] flex-1">
+                        <label for="buscar" class="block text-sm font-medium text-gray-700">Buscar</label>
+                        <input type="search" name="buscar" id="buscar" value="{{ request('buscar') }}" autofocus
+                               placeholder="Nombre, teléfono, cédula/NIT o placa (ej. ABC12D)"
                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Estado</label>
-                        <select name="estado" class="mt-1 block rounded-md border-gray-300 shadow-sm">
-                            <option value="">Activos</option>
+                        <label for="estado" class="block text-sm font-medium text-gray-700">Estado</label>
+                        <select name="estado" id="estado" class="mt-1 block rounded-md border-gray-300 shadow-sm">
+                            <option value="">Activos e hibernando</option>
+                            <option value="activo" @selected(request('estado') === 'activo')>Solo activos</option>
                             <option value="hibernando" @selected(request('estado') === 'hibernando')>Hibernando</option>
                             <option value="archivado" @selected(request('estado') === 'archivado')>Archivados</option>
                         </select>
                     </div>
+                    <div>
+                        <label for="tipo_cliente_id" class="block text-sm font-medium text-gray-700">Tipo</label>
+                        <select name="tipo_cliente_id" id="tipo_cliente_id" class="mt-1 block rounded-md border-gray-300 shadow-sm">
+                            <option value="">Todos</option>
+                            @foreach($tiposCliente as $tipo)
+                                <option value="{{ $tipo->id }}" @selected((string) request('tipo_cliente_id') === (string) $tipo->id)>
+                                    {{ $tipo->nombre }}{{ $tipo->activo ? '' : ' (inactivo)' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                     <button type="submit" class="rounded-md bg-gray-800 px-4 py-2 text-sm text-white">Filtrar</button>
+                    @if($filtrando)
+                        <a href="{{ route('clientes.index') }}" class="px-2 py-2 text-sm text-gray-600 hover:text-gray-900">Limpiar</a>
+                    @endif
                 </form>
             </div>
 
-            <div class="overflow-hidden rounded-lg bg-white shadow-sm">
-                <table class="min-w-full divide-y divide-gray-200">
+            <div class="overflow-x-auto rounded-lg bg-white shadow-sm">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Nombre</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Teléfono</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Motos</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Estado</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium uppercase text-gray-500">Acciones</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Cliente</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Teléfono</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Motos</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Tipo</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Estado</th>
+                            @if($puedeCrear)
+                                <th class="px-4 py-3"><span class="sr-only">Acciones</span></th>
+                            @endif
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        @foreach($clientes as $cliente)
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse($clientes as $cliente)
                             <tr>
-                                <td class="px-6 py-4 text-sm font-medium text-gray-900">
-                                    <a href="{{ route('clientes.show', $cliente) }}" class="hover:text-indigo-600">{{ $cliente->nombre }}</a>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $cliente->telefono }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $cliente->motos->pluck('placa')->join(', ') }}</td>
-                                <td class="px-6 py-4 text-sm">
-                                    <span class="rounded-full px-2 py-0.5 text-xs font-medium
-                                        {{ match($cliente->estado_cliente) {
-                                            'activo' => 'bg-green-100 text-green-700',
-                                            'hibernando' => 'bg-yellow-100 text-yellow-700',
-                                            'archivado' => 'bg-gray-200 text-gray-600',
-                                        } }}">
-                                        {{ ucfirst($cliente->estado_cliente) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-right text-sm">
-                                    @if($cliente->estado_cliente === 'archivado')
-                                        <form method="POST" action="{{ route('clientes.reinscribir', $cliente) }}" class="inline">
-                                            @csrf
-                                            <button type="submit" class="text-green-600 hover:text-green-900">Reinscribir</button>
-                                        </form>
-                                    @else
-                                        <a href="{{ route('clientes.edit', $cliente) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+                                <td class="px-4 py-3">
+                                    {{-- Quien puede editar va directo a la edición; el mecánico, a la ficha. --}}
+                                    <a href="{{ auth()->user()->can('update', $cliente) ? route('clientes.edit', $cliente) : route('clientes.show', $cliente) }}"
+                                       class="font-medium text-gray-900 hover:text-indigo-600">{{ $cliente->nombre }}</a>
+                                    @if($cliente->cedula_nit)
+                                        <p class="text-xs text-gray-500">CC/NIT {{ $cliente->cedula_nit }}</p>
                                     @endif
                                 </td>
+                                <td class="whitespace-nowrap px-4 py-3 text-gray-600">{{ $cliente->telefono }}</td>
+                                <td class="px-4 py-3 text-gray-600">
+                                    @foreach($cliente->motos as $moto)
+                                        <span class="font-mono font-medium text-gray-800">{{ $moto->placa }}</span>
+                                        <span class="text-xs text-gray-500">{{ $moto->marca }} {{ $moto->modelo }}</span>@if(! $loop->last)<br>@endif
+                                    @endforeach
+                                </td>
+                                <td class="px-4 py-3">@include('clientes._tipo', ['tipo' => $cliente->tipoCliente])</td>
+                                <td class="px-4 py-3">@include('clientes._estado', ['estado' => $cliente->estado_cliente])</td>
+                                @if($puedeCrear)
+                                    <td class="whitespace-nowrap px-4 py-3 text-right">
+                                        @can('update', $cliente)
+                                            @if($cliente->estado_cliente === 'archivado')
+                                                <form method="POST" action="{{ route('clientes.reinscribir', $cliente) }}" class="mr-3 inline text-left"
+                                                      x-data="formularioConPin()" @submit.prevent="pedirPin()">
+                                                    @csrf
+                                                    @include('partials.pin-modal', ['titulo' => "Reinscribir a {$cliente->nombre}"])
+                                                    <button type="submit" class="text-green-600 hover:text-green-900">Reinscribir</button>
+                                                </form>
+                                            @endif
+                                            <a href="{{ route('clientes.edit', $cliente) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+                                        @endcan
+                                    </td>
+                                @endif
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                                    {{ $filtrando ? 'No hay clientes que coincidan con la búsqueda.' : 'Aún no hay clientes registrados.' }}
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div class="mt-4">{{ $clientes->links() }}</div>
+            <div>{{ $clientes->links() }}</div>
         </div>
     </div>
 </x-app-layout>

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\DetalleOrden;
 use App\Models\OrdenServicio;
+use App\Scopes\ClienteActivoScope;
 use Illuminate\Support\Facades\DB;
 
 class FacturaService
@@ -25,18 +26,29 @@ class FacturaService
         return DB::transaction(function () use ($orden, $items) {
             $orden->detalles()->delete();
 
+            // Regla 8: el precio NUNCA viene del frontend. Se recalcula desde
+            // repuestos.precio_venta con el descuento del tipo de cliente.
+            $tipoCliente = $orden->cliente()
+                ->withoutGlobalScope(ClienteActivoScope::class)
+                ->firstOrFail()
+                ->tipoClienteEfectivo();
+
             foreach ($items as $item) {
                 $repuesto = $this->inventarioService->descontarStock(
                     $item['repuesto_id'],
                     $item['cantidad']
                 );
 
+                $precioFinal = $tipoCliente->calcularPrecioConDescuento($repuesto->precio_venta);
+
                 DetalleOrden::create([
                     'orden_servicio_id' => $orden->id,
                     'repuesto_id' => $repuesto->id,
                     'cantidad' => $item['cantidad'],
-                    'precio_unitario' => $repuesto->precio_venta,
-                    'subtotal' => $repuesto->precio_venta * $item['cantidad'],
+                    'precio_unitario' => $precioFinal,
+                    'precio_unitario_original' => $repuesto->precio_venta,
+                    'descuento_aplicado_pct' => $tipoCliente->descuento_repuestos_pct,
+                    'subtotal' => $precioFinal * $item['cantidad'],
                     'mano_obra' => $item['mano_obra'] ?? 0,
                 ]);
             }

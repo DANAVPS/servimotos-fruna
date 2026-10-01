@@ -19,6 +19,8 @@ class DetalleOrden extends Model
         'repuesto_id',
         'cantidad',
         'precio_unitario',
+        'precio_unitario_original',
+        'descuento_aplicado_pct',
         'subtotal',
         'mano_obra',
     ];
@@ -27,6 +29,8 @@ class DetalleOrden extends Model
     {
         return [
             'precio_unitario' => 'decimal:2',
+            'precio_unitario_original' => 'decimal:2',
+            'descuento_aplicado_pct' => 'decimal:2',
             'subtotal' => 'decimal:2',
             'mano_obra' => 'decimal:2',
         ];
@@ -39,6 +43,8 @@ class DetalleOrden extends Model
 
     public function repuesto(): BelongsTo
     {
-        return $this->belongsTo(Repuesto::class);
+        // withTrashed: una factura histórica debe seguir mostrando el
+        // repuesto aunque luego se haya eliminado del inventario.
+        return $this->belongsTo(Repuesto::class)->withTrashed();
     }
 }
