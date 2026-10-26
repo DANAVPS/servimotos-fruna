@@ -13,16 +13,24 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <!-- Enlace corregido al Dashboard -->
+                    @unless(auth()->user()->esMecanico())
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @endunless
 
                     <!-- Enlace a Órdenes Kanban -->
+                    @if(auth()->user()->esMecanico())
+                        <x-nav-link :href="route('mi-dia')" :active="request()->routeIs('mi-dia')">
+                            {{ __('Mi día') }}
+                        </x-nav-link>
+                    @endif
+
                     <x-nav-link :href="route('ordenes.kanban')" :active="request()->routeIs('ordenes.*')">
                         {{ __('Órdenes') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('inventario.index')" :active="request()->routeIs('inventario.*')">
+                    <x-nav-link :href="route('inventario.index')" :active="request()->routeIs('inventario.*', 'categorias.*', 'distribuidores.*')">
                         {{ __('Inventario') }}
                         @php($alertas = app(\App\Services\InventarioService::class)->repuestosConAlerta()->count())
                         @if($alertas > 0)
@@ -32,11 +40,23 @@
                         @endif
                     </x-nav-link>
 
-                    @if(auth()->user()->esAdministradora() || auth()->user()->esSuperAdmin())
+                    @can('viewAny', App\Models\Cliente::class)
                         <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
                             {{ __('Clientes') }}
                         </x-nav-link>
-                    @endif
+                    @endcan
+
+                    @can('viewAny', App\Models\TipoCliente::class)
+                        <x-nav-link :href="route('tipos-cliente.index')" :active="request()->routeIs('tipos-cliente.*')">
+                            {{ __('Tipos de Cliente') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @can('viewAny', App\Models\Mecanico::class)
+                        <x-nav-link :href="route('mecanicos.index')" :active="request()->routeIs('mecanicos.*')">
+                            {{ __('Mecánicos') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -90,15 +110,23 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <!-- Enlace móvil corregido al Dashboard -->
+            @unless(auth()->user()->esMecanico())
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @endunless
+
+            @if(auth()->user()->esMecanico())
+                <x-responsive-nav-link :href="route('mi-dia')" :active="request()->routeIs('mi-dia')">
+                    {{ __('Mi día') }}
+                </x-responsive-nav-link>
+            @endif
 
             <x-responsive-nav-link :href="route('ordenes.kanban')" :active="request()->routeIs('ordenes.*')">
                 {{ __('Órdenes') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('inventario.index')" :active="request()->routeIs('inventario.*')">
+            <x-responsive-nav-link :href="route('inventario.index')" :active="request()->routeIs('inventario.*', 'categorias.*', 'distribuidores.*')">
                 {{ __('Inventario') }}
                 @if($alertas > 0)
                     <span class="ms-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
@@ -107,11 +135,23 @@
                 @endif
             </x-responsive-nav-link>
 
-            @if(auth()->user()->esAdministradora() || auth()->user()->esSuperAdmin())
+            @can('viewAny', App\Models\Cliente::class)
                 <x-responsive-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
                     {{ __('Clientes') }}
                 </x-responsive-nav-link>
-            @endif
+            @endcan
+
+            @can('viewAny', App\Models\TipoCliente::class)
+                <x-responsive-nav-link :href="route('tipos-cliente.index')" :active="request()->routeIs('tipos-cliente.*')">
+                    {{ __('Tipos de Cliente') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('viewAny', App\Models\Mecanico::class)
+                <x-responsive-nav-link :href="route('mecanicos.index')" :active="request()->routeIs('mecanicos.*')">
+                    {{ __('Mecánicos') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->

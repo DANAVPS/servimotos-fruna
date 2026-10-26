@@ -13,9 +13,12 @@ public function run(): void
         TallerSeeder::class,
         UserSeeder::class,
         ConfiguracionTallerSeeder::class,
+        CategoriasRepuestoSeeder::class,
+        TiposClienteSeeder::class,
         ClienteSeeder::class,
         MecanicoSeeder::class,
-        RepuestoSeeder::class,
+        InventarioSeeder::class,
+        DistribuidorSeeder::class,
         MotoSeeder::class,
         OrdenServicioSeeder::class,
     ]);
