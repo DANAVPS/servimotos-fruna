@@ -85,9 +85,12 @@ class ClienteBusquedaYPermisosTest extends TestCase
         $this->actingAs($mecanico)->getJson(route('clientes.buscar', ['q' => 'abc12d']))
             ->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.nombre', 'Andrés Gómez')
-            ->assertJsonPath('data.0.tipo_cliente.nombre', 'Regular')
-            ->assertJsonPath('data.0.motos.0.placa', 'ABC12D');
+            // Al mecánico: primer nombre y motos; sin contacto ni tipo (descuento).
+            ->assertJsonPath('data.0.nombre', 'Andrés')
+            ->assertJsonPath('data.0.motos.0.placa', 'ABC12D')
+            ->assertJsonMissingPath('data.0.cedula_nit')
+            ->assertJsonMissingPath('data.0.telefono')
+            ->assertJsonMissingPath('data.0.tipo_cliente');
     }
 
     public function test_el_mecanico_ve_clientes_pero_no_puede_crear_ni_editar(): void

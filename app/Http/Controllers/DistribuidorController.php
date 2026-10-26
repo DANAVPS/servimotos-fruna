@@ -9,10 +9,10 @@ use App\Models\Distribuidor;
 use App\Models\Repuesto;
 use App\Services\DistribuidorService;
 use App\Services\SolicitudPedidoService;
+use App\Support\LogoTaller;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -102,7 +102,7 @@ class DistribuidorController extends Controller
             'pedido' => $pedido,
             'taller' => $distribuidor->taller,
             'configuracion' => $configuracion,
-            'logo' => $this->logoEnBase64($configuracion),
+            'logo' => LogoTaller::base64($configuracion),
         ]);
 
         return $pdf->stream('pedido-' . str($distribuidor->nombre)->slug() . '-' . now()->format('Ymd') . '.pdf');
@@ -126,21 +126,5 @@ class DistribuidorController extends Controller
             'referencias' => count($pedido['lineas']),
             'unidades' => $pedido['total_unidades'],
         ]);
-    }
-
-    /**
-     * DomPDF no carga URLs remotas por defecto: el logo va embebido.
-     */
-    private function logoEnBase64(?ConfiguracionTaller $configuracion): ?string
-    {
-        $ruta = $configuracion?->logo_path;
-
-        if (! $ruta || ! Storage::disk('public')->exists($ruta)) {
-            return null;
-        }
-
-        $mime = Storage::disk('public')->mimeType($ruta) ?: 'image/png';
-
-        return "data:{$mime};base64," . base64_encode(Storage::disk('public')->get($ruta));
     }
 }

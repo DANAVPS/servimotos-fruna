@@ -10,6 +10,7 @@ use App\Models\TipoCliente;
 use App\Scopes\ClienteActivoScope;
 use App\Services\AutorizacionService;
 use App\Services\ClienteService;
+use App\Support\TarjetaOrden;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,9 +31,12 @@ class ClienteController extends Controller
     {
         $this->authorize('viewAny', Cliente::class);
 
+        // El mecánico no ve ni busca por cédula/teléfono, ni filtra por tipo (descuento).
+        $verPrivado = TarjetaOrden::veDinero($request->user());
+
         $query = Cliente::with(['motos', 'tipoCliente'])
-            ->buscar($request->query('buscar'))
-            ->when($request->filled('tipo_cliente_id'), fn ($q) => $q->where('tipo_cliente_id', $request->integer('tipo_cliente_id')))
+            ->buscar($request->query('buscar'), $verPrivado)
+            ->when($verPrivado && $request->filled('tipo_cliente_id'), fn ($q) => $q->where('tipo_cliente_id', $request->integer('tipo_cliente_id')))
             ->orderBy('nombre');
 
         // Por defecto el ClienteActivoScope oculta archivados; los filtros los muestran explícitamente.
@@ -61,14 +65,34 @@ class ClienteController extends Controller
             return response()->json(['data' => []]);
         }
 
+        $verPrivado = TarjetaOrden::veDinero($request->user());
+
         $clientes = Cliente::with(['motos', 'tipoCliente'])
-            ->buscar($termino)
+            ->buscar($termino, $verPrivado)
             ->orderBy('nombre')
             ->limit(self::RESULTADOS_BUSCADOR)
             ->get();
 
         return response()->json([
-            'data' => $clientes->map(function (Cliente $cliente) {
+            'data' => $clientes->map(function (Cliente $cliente) use ($verPrivado) {
+                $motos = $cliente->motos->map(fn ($moto) => [
+                    'id' => $moto->id,
+                    'placa' => $moto->placa,
+                    'marca' => $moto->marca,
+                    'modelo' => $moto->modelo,
+                    'anio' => $moto->anio,
+                ])->values();
+
+                // Mecánico: solo primer nombre y motos, sin contacto ni tipo (descuento).
+                if (! $verPrivado) {
+                    return [
+                        'id' => $cliente->id,
+                        'nombre' => TarjetaOrden::primerNombre($cliente->nombre),
+                        'estado_cliente' => $cliente->estado_cliente,
+                        'motos' => $motos,
+                    ];
+                }
+
                 $tipo = $cliente->tipoClienteEfectivo();
 
                 return [
@@ -81,13 +105,7 @@ class ClienteController extends Controller
                         'nombre' => $tipo->nombre,
                         'descuento_repuestos_pct' => (float) $tipo->descuento_repuestos_pct,
                     ],
-                    'motos' => $cliente->motos->map(fn ($moto) => [
-                        'id' => $moto->id,
-                        'placa' => $moto->placa,
-                        'marca' => $moto->marca,
-                        'modelo' => $moto->modelo,
-                        'anio' => $moto->anio,
-                    ])->values(),
+                    'motos' => $motos,
                 ];
             })->values(),
         ]);

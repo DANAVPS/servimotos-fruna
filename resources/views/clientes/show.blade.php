@@ -1,10 +1,15 @@
+@php
+    // El mecánico no ve contacto (cédula, teléfono, correo) ni tipo/descuento.
+    $verPrivado = App\Support\TarjetaOrden::veDinero(auth()->user());
+    $nombreVisible = $verPrivado ? $cliente->nombre : App\Support\TarjetaOrden::primerNombre($cliente->nombre);
+@endphp
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div class="flex flex-wrap items-center gap-3">
                 <button type="button" onclick="history.length > 1 ? history.back() : location.assign('{{ route('clientes.index') }}')"
                         class="text-sm text-gray-500 hover:text-gray-800">← Volver</button>
-                <h2 class="text-xl font-semibold text-gray-800">{{ $cliente->nombre }}</h2>
+                <h2 class="text-xl font-semibold text-gray-800">{{ $nombreVisible }}</h2>
                 @include('clientes._estado', ['estado' => $cliente->estado_cliente])
             </div>
             @can('update', $cliente)
@@ -35,13 +40,15 @@
 
             <div class="rounded-lg bg-white p-6 shadow-sm">
                 <dl class="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
-                    <div><dt class="text-gray-500">Teléfono</dt><dd class="font-medium">{{ $cliente->telefono }}</dd></div>
-                    <div><dt class="text-gray-500">Cédula / NIT</dt><dd class="font-medium">{{ $cliente->cedula_nit ?? '—' }}</dd></div>
-                    <div><dt class="text-gray-500">Correo</dt><dd class="font-medium">{{ $cliente->correo ?? '—' }}</dd></div>
-                    <div>
-                        <dt class="text-gray-500">Tipo de cliente</dt>
-                        <dd class="mt-0.5">@include('clientes._tipo', ['tipo' => $cliente->tipoClienteEfectivo()])</dd>
-                    </div>
+                    @if($verPrivado)
+                        <div><dt class="text-gray-500">Teléfono</dt><dd class="font-medium">{{ $cliente->telefono }}</dd></div>
+                        <div><dt class="text-gray-500">Cédula / NIT</dt><dd class="font-medium">{{ $cliente->cedula_nit ?? '—' }}</dd></div>
+                        <div><dt class="text-gray-500">Correo</dt><dd class="font-medium">{{ $cliente->correo ?? '—' }}</dd></div>
+                        <div>
+                            <dt class="text-gray-500">Tipo de cliente</dt>
+                            <dd class="mt-0.5">@include('clientes._tipo', ['tipo' => $cliente->tipoClienteEfectivo()])</dd>
+                        </div>
+                    @endif
                     <div><dt class="text-gray-500">Última visita</dt><dd class="font-medium">{{ $cliente->fecha_ultima_visita?->format('d/m/Y') ?? '—' }}</dd></div>
                 </dl>
             </div>

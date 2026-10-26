@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\CategoriaRepuestoController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DistribuidorController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\MecanicoController;
+use App\Http\Controllers\MiDiaController;
 use App\Http\Controllers\OrdenServicioController;
 use App\Http\Controllers\PinAutorizacionController;
 use App\Http\Controllers\ProfileController;
@@ -34,9 +37,14 @@ Route::post('/webhook/whatsapp', [WhatsAppWebhookController::class, 'handle']);
 | Dashboard (Breeze)
 |--------------------------------------------------------------------------
 */
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Dashboard ejecutivo (administradora). El mecánico se redirige a "Mi día".
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+// Datos del dashboard para la consulta periódica. En web.php a propósito:
+// sesión + SetTenantContext (grupo web), sin Sanctum.
+Route::get('/api/dashboard', [DashboardController::class, 'datos'])
+    ->middleware(['auth', 'role:administradora'])
+    ->name('dashboard.datos');
 
 /*
 |--------------------------------------------------------------------------
@@ -94,17 +102,32 @@ Route::middleware(['auth', 'role:administradora'])->group(function () {
 | Órdenes de servicio (Kanban) y Facturación
 |--------------------------------------------------------------------------
 */
+// "Mi día": órdenes del mecánico, solo lectura y sin dinero.
+Route::get('/mi-dia', MiDiaController::class)->middleware(['auth', 'role:mecanico'])->name('mi-dia');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/ordenes', [OrdenServicioController::class, 'kanban'])->name('ordenes.kanban');
+    Route::post('/ordenes', [OrdenServicioController::class, 'store'])->name('ordenes.store');
     Route::get('/ordenes/{orden}', [OrdenServicioController::class, 'show'])->name('ordenes.show');
     Route::patch('/ordenes/{orden}/estado', [OrdenServicioController::class, 'actualizarEstado'])->name('ordenes.estado');
+    Route::patch('/ordenes/{orden}/mecanico', [OrdenServicioController::class, 'asignarMecanico'])->name('ordenes.mecanico');
 
     Route::patch('/ordenes/{orden}/pagar', [OrdenServicioController::class, 'marcarPagada'])
         ->middleware('role:administradora')
         ->name('ordenes.pagar');
 
     Route::get('/ordenes/{orden}/liquidar', [FacturaController::class, 'liquidar'])->name('facturas.liquidar');
-    Route::post('/ordenes/{orden}/factura', [FacturaController::class, 'generar'])->name('facturas.generar');
+    // Liquidación en dos pasos: el mecánico registra el trabajo; la administradora emite la factura.
+    Route::post('/ordenes/{orden}/trabajo', [FacturaController::class, 'registrarTrabajo'])->name('ordenes.trabajo');
+    Route::post('/ordenes/{orden}/factura', [FacturaController::class, 'generar'])
+        ->middleware('role:administradora')
+        ->name('facturas.generar');
+
+    // Reversa la liquidación (repone stock) para volver a liquidar. Exige PIN.
+    // role: va antes de pin, para que el mecánico reciba 403 y no "configura tu PIN".
+    Route::post('/ordenes/{orden}/factura/corregir', [FacturaController::class, 'corregir'])
+        ->middleware(['role:administradora', 'pin'])
+        ->name('facturas.corregir');
     Route::get('/facturas/{orden}/pdf', [FacturaController::class, 'descargar'])->name('facturas.pdf');
 });
 
@@ -138,6 +161,13 @@ Route::middleware(['auth', 'role:administradora'])->group(function () {
     Route::post('/tipos-cliente', [TipoClienteController::class, 'store'])->name('tipos-cliente.store');
     Route::get('/tipos-cliente/{tipoCliente}/editar', [TipoClienteController::class, 'edit'])->name('tipos-cliente.edit');
     Route::put('/tipos-cliente/{tipoCliente}', [TipoClienteController::class, 'update'])->name('tipos-cliente.update');
+
+    // Mecánicos: sin borrado, se desactivan.
+    Route::get('/mecanicos', [MecanicoController::class, 'index'])->name('mecanicos.index');
+    Route::get('/mecanicos/nuevo', [MecanicoController::class, 'create'])->name('mecanicos.create');
+    Route::post('/mecanicos', [MecanicoController::class, 'store'])->name('mecanicos.store');
+    Route::get('/mecanicos/{mecanico}/editar', [MecanicoController::class, 'edit'])->name('mecanicos.edit');
+    Route::put('/mecanicos/{mecanico}', [MecanicoController::class, 'update'])->name('mecanicos.update');
 });
 
 require __DIR__.'/auth.php';

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\CategoriaRepuesto;
 use App\Models\Cliente;
 use App\Models\Distribuidor;
+use App\Models\Mecanico;
 use App\Models\OrdenServicio;
 use App\Models\Repuesto;
 use App\Models\Taller;
@@ -13,6 +14,7 @@ use App\Observers\TallerObserver;
 use App\Policies\CategoriaRepuestoPolicy;
 use App\Policies\ClientePolicy;
 use App\Policies\DistribuidorPolicy;
+use App\Policies\MecanicoPolicy;
 use App\Policies\OrdenServicioPolicy;
 use App\Policies\RepuestoPolicy;
 use App\Policies\TipoClientePolicy;
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(CategoriaRepuesto::class, CategoriaRepuestoPolicy::class);
         Gate::policy(Cliente::class, ClientePolicy::class);
         Gate::policy(TipoCliente::class, TipoClientePolicy::class);
+        Gate::policy(Mecanico::class, MecanicoPolicy::class);
 
         Taller::observe(TallerObserver::class);
     }

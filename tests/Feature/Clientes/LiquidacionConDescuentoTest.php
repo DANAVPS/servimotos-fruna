@@ -11,6 +11,7 @@ use App\Models\Taller;
 use App\Models\TipoCliente;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\UsaTaller;
 use Tests\TestCase;
 
@@ -24,6 +25,7 @@ class LiquidacionConDescuentoTest extends TestCase
 
     private Taller $taller;
 
+    /** Quien emite la factura: la administradora. */
     private User $mecanico;
 
     private Repuesto $filtro;
@@ -31,9 +33,10 @@ class LiquidacionConDescuentoTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Storage::fake('facturas');
 
         $this->taller = Taller::factory()->create();
-        $this->mecanico = User::factory()->mecanico()->deTaller($this->taller)->create();
+        $this->mecanico = User::factory()->administradora()->deTaller($this->taller)->create(); // emite la factura
         $this->filtro = Repuesto::factory()->create([
             'taller_id' => $this->taller->id,
             'nombre' => 'Filtro de aceite K&N',
@@ -58,11 +61,15 @@ class LiquidacionConDescuentoTest extends TestCase
     private function liquidar(OrdenServicio $orden, array $item): DetalleOrden
     {
         $this->actingAs($this->mecanico)
-            ->post(route('facturas.generar', $orden), ['items' => [[
-                'repuesto_id' => $this->filtro->id,
-                'cantidad' => 2,
-                ...$item,
-            ]]])
+            ->post(route('facturas.generar', $orden), [
+                'items' => [[
+                    'repuesto_id' => $this->filtro->id,
+                    'cantidad' => 2,
+                    ...$item,
+                ]],
+                'mano_obra' => 0,
+                'observaciones_tecnicas' => 'Cambio de filtro de aceite.',
+            ])
             ->assertRedirect(route('ordenes.show', $orden))
             ->assertSessionHasNoErrors();
 

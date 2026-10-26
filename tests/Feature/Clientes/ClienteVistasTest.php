@@ -56,7 +56,7 @@ class ClienteVistasTest extends TestCase
 
         $this->actingAs($mecanico)->get(route('clientes.index'))
             ->assertOk()
-            ->assertSee('Mensajería Rápida SAS')
+            ->assertSee('Mensajería') // solo el primer nombre
             ->assertDontSee(route('clientes.edit', $this->cliente))
             ->assertDontSee('+ Nuevo cliente')
             ->assertDontSee(route('tipos-cliente.index'));

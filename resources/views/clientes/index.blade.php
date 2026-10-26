@@ -1,5 +1,7 @@
 @php
     $puedeCrear = auth()->user()->can('create', App\Models\Cliente::class);
+    // El mecánico no ve contacto (cédula, teléfono) ni tipo/descuento.
+    $verPrivado = App\Support\TarjetaOrden::veDinero(auth()->user());
     $filtrando = request()->filled('buscar') || request()->filled('estado') || request()->filled('tipo_cliente_id');
 @endphp
 
@@ -36,7 +38,7 @@
                     <div class="min-w-[220px] flex-1">
                         <label for="buscar" class="block text-sm font-medium text-gray-700">Buscar</label>
                         <input type="search" name="buscar" id="buscar" value="{{ request('buscar') }}" autofocus
-                               placeholder="Nombre, teléfono, cédula/NIT o placa (ej. ABC12D)"
+                               placeholder="{{ $verPrivado ? 'Nombre, teléfono, cédula/NIT o placa (ej. ABC12D)' : 'Nombre o placa (ej. ABC12D)' }}"
                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
                     <div>
@@ -48,6 +50,7 @@
                             <option value="archivado" @selected(request('estado') === 'archivado')>Archivados</option>
                         </select>
                     </div>
+                    @if($verPrivado)
                     <div>
                         <label for="tipo_cliente_id" class="block text-sm font-medium text-gray-700">Tipo</label>
                         <select name="tipo_cliente_id" id="tipo_cliente_id" class="mt-1 block rounded-md border-gray-300 shadow-sm">
@@ -59,6 +62,7 @@
                             @endforeach
                         </select>
                     </div>
+                    @endif
                     <button type="submit" class="rounded-md bg-gray-800 px-4 py-2 text-sm text-white">Filtrar</button>
                     @if($filtrando)
                         <a href="{{ route('clientes.index') }}" class="px-2 py-2 text-sm text-gray-600 hover:text-gray-900">Limpiar</a>
@@ -71,9 +75,13 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Cliente</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Teléfono</th>
+                            @if($verPrivado)
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Teléfono</th>
+                            @endif
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Motos</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Tipo</th>
+                            @if($verPrivado)
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Tipo</th>
+                            @endif
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Estado</th>
                             @if($puedeCrear)
                                 <th class="px-4 py-3"><span class="sr-only">Acciones</span></th>
@@ -86,19 +94,23 @@
                                 <td class="px-4 py-3">
                                     {{-- Quien puede editar va directo a la edición; el mecánico, a la ficha. --}}
                                     <a href="{{ auth()->user()->can('update', $cliente) ? route('clientes.edit', $cliente) : route('clientes.show', $cliente) }}"
-                                       class="font-medium text-gray-900 hover:text-indigo-600">{{ $cliente->nombre }}</a>
-                                    @if($cliente->cedula_nit)
+                                       class="font-medium text-gray-900 hover:text-indigo-600">{{ $verPrivado ? $cliente->nombre : App\Support\TarjetaOrden::primerNombre($cliente->nombre) }}</a>
+                                    @if($verPrivado && $cliente->cedula_nit)
                                         <p class="text-xs text-gray-500">CC/NIT {{ $cliente->cedula_nit }}</p>
                                     @endif
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-gray-600">{{ $cliente->telefono }}</td>
+                                @if($verPrivado)
+                                    <td class="whitespace-nowrap px-4 py-3 text-gray-600">{{ $cliente->telefono }}</td>
+                                @endif
                                 <td class="px-4 py-3 text-gray-600">
                                     @foreach($cliente->motos as $moto)
                                         <span class="font-mono font-medium text-gray-800">{{ $moto->placa }}</span>
                                         <span class="text-xs text-gray-500">{{ $moto->marca }} {{ $moto->modelo }}</span>@if(! $loop->last)<br>@endif
                                     @endforeach
                                 </td>
-                                <td class="px-4 py-3">@include('clientes._tipo', ['tipo' => $cliente->tipoCliente])</td>
+                                @if($verPrivado)
+                                    <td class="px-4 py-3">@include('clientes._tipo', ['tipo' => $cliente->tipoCliente])</td>
+                                @endif
                                 <td class="px-4 py-3">@include('clientes._estado', ['estado' => $cliente->estado_cliente])</td>
                                 @if($puedeCrear)
                                     <td class="whitespace-nowrap px-4 py-3 text-right">

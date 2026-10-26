@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Mecanico;
 use App\Models\Taller;
+use App\Models\User;
 use App\Support\TenantManager;
 use Illuminate\Database\Seeder;
 
@@ -17,10 +18,13 @@ class MecanicoSeeder extends Seeder
             app(TenantManager::class)->establecer($taller->id);
         }
 
+        // El usuario mecánico de prueba entra a /mi-dia como Alexánder.
+        $usuarioMecanico = User::where('email', 'mecanico@servimotosfruna.com')->value('id');
+
         Mecanico::insert([
-            ['taller_id' => $taller?->id, 'nombre' => 'Alexánder Duarte Molina', 'especialidad' => 'Motor y transmisión', 'disponibilidad' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['taller_id' => $taller?->id, 'nombre' => 'Ferney Cárdenas Rico', 'especialidad' => 'Sistema eléctrico', 'disponibilidad' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['taller_id' => $taller?->id, 'nombre' => 'Yohan David Beltrán Cruz', 'especialidad' => 'Suspensión y frenos', 'disponibilidad' => false, 'created_at' => now(), 'updated_at' => now()],
+            ['taller_id' => $taller?->id, 'user_id' => $usuarioMecanico, 'nombre' => 'Alexánder Duarte Molina', 'especialidad' => 'Motor y transmisión', 'disponibilidad' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['taller_id' => $taller?->id, 'user_id' => null, 'nombre' => 'Ferney Cárdenas Rico', 'especialidad' => 'Sistema eléctrico', 'disponibilidad' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['taller_id' => $taller?->id, 'user_id' => null, 'nombre' => 'Yohan David Beltrán Cruz', 'especialidad' => 'Suspensión y frenos', 'disponibilidad' => false, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

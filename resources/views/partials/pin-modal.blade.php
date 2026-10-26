@@ -104,6 +104,12 @@
                             const campos = Object.entries(datos.errors ?? {});
                             const errorPin = campos.find(([campo]) => campo === 'pin_autorizacion');
 
+                            // Regla de negocio sin errores de campo (p. ej. estado de la orden).
+                            if (! campos.length) {
+                                this.error = datos.message ?? 'No se pudo completar la acción.';
+                                return;
+                            }
+
                             if (errorPin && campos.length === 1) {
                                 this.error = errorPin[1][0];
                                 return;

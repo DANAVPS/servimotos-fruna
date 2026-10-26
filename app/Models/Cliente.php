@@ -106,7 +106,11 @@ class Cliente extends Model
      * sus motos. Va dentro de un `where` agrupado para no romper los scopes
      * de taller ni el de clientes archivados.
      */
-    public function scopeBuscar($query, ?string $termino)
+    /**
+     * $datosPrivados = false (mecánico): solo nombre y placa. Buscar por cédula o
+     * teléfono confirmaría a quién pertenece un dato que el mecánico no debe ver.
+     */
+    public function scopeBuscar($query, ?string $termino, bool $datosPrivados = true)
     {
         $termino = trim((string) $termino);
 
@@ -117,6 +121,16 @@ class Cliente extends Model
         $digitos = preg_replace('/\D/', '', $termino);
         $documento = Identificadores::cedulaNit($termino);
         $placa = Identificadores::placa($termino);
+
+        if (! $datosPrivados) {
+            return $query->where(function ($q) use ($termino, $placa) {
+                $q->where('clientes.nombre', 'ilike', "%{$termino}%");
+
+                if ($placa !== null) {
+                    $q->orWhereHas('motos', fn ($motos) => $motos->where('motos.placa', 'like', "%{$placa}%"));
+                }
+            });
+        }
 
         return $query->where(function ($q) use ($termino, $digitos, $documento, $placa) {
             $q->where('clientes.nombre', 'ilike', "%{$termino}%")

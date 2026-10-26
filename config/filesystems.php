@@ -38,6 +38,13 @@ return [
             'report' => false,
         ],
 
+        // JSON de facturas para integración con IA (Bloque 3). Privado: no se sirve por web.
+        'facturas' => [
+            'driver' => 'local',
+            'root' => storage_path('app/facturas'),
+            'throw' => true,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

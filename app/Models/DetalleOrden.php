@@ -22,7 +22,6 @@ class DetalleOrden extends Model
         'precio_unitario_original',
         'descuento_aplicado_pct',
         'subtotal',
-        'mano_obra',
     ];
 
     protected function casts(): array
@@ -32,7 +31,6 @@ class DetalleOrden extends Model
             'precio_unitario_original' => 'decimal:2',
             'descuento_aplicado_pct' => 'decimal:2',
             'subtotal' => 'decimal:2',
-            'mano_obra' => 'decimal:2',
         ];
     }
 
