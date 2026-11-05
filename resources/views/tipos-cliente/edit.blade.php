@@ -8,12 +8,12 @@
     <div class="py-6">
         <div class="mx-auto max-w-2xl space-y-4 sm:px-6 lg:px-8">
             @if($tipoCliente->clientes_count > 0)
-                <p class="rounded-md bg-blue-50 p-3 text-sm text-blue-800">
+                <p class="rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
                     {{ $tipoCliente->clientes_count }} {{ $tipoCliente->clientes_count === 1 ? 'cliente tiene' : 'clientes tienen' }} este tipo.
                     Un nuevo % aplica a sus próximas liquidaciones; las facturas ya emitidas no cambian.
                 </p>
             @endif
-            <div class="rounded-lg bg-white p-6 shadow-sm">
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <form method="POST" action="{{ route('tipos-cliente.update', $tipoCliente) }}">
                     @method('PUT')
                     @include('tipos-cliente._form')

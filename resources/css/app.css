@@ -5,3 +5,73 @@
 [x-cloak] {
     display: none !important;
 }
+
+@layer base {
+    body {
+        @apply bg-gray-100 text-gray-900;
+    }
+}
+
+@layer components {
+    /* Títulos de página: Barlow Condensed itálica con la franja roja del logo. */
+    .page-header h1,
+    .page-header h2 {
+        @apply flex items-center gap-3 font-display text-3xl font-extrabold uppercase italic leading-none tracking-wide text-navy-700 sm:text-4xl;
+    }
+
+    .page-header h1::before,
+    .page-header h2::before {
+        content: '';
+        @apply inline-block h-7 w-2.5 shrink-0 -skew-x-[18deg] bg-brand-500 sm:h-8;
+    }
+
+    .titulo-display {
+        @apply font-display font-extrabold uppercase italic tracking-wide text-navy-700;
+    }
+
+    .franja-roja {
+        @apply inline-block -skew-x-[18deg] bg-brand-500;
+    }
+
+    /* Menú lateral */
+    .nav-lateral-item {
+        @apply flex min-h-[44px] items-center gap-3 rounded-lg px-3.5 text-[15px] font-medium text-[#D9D4D4] transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60;
+    }
+
+    .nav-lateral-item.activo {
+        @apply bg-brand-600 font-semibold text-white hover:bg-brand-600;
+    }
+
+    .nav-lateral-grupo {
+        @apply px-3.5 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#A9B8C4];
+    }
+
+    /* Botones reutilizables */
+    .btn-primario {
+        @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 text-[15px] font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:opacity-50;
+    }
+
+    .btn-secundario {
+        @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-[15px] font-semibold text-navy-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-navy-500 focus:ring-offset-2 disabled:opacity-50;
+    }
+
+    .btn-navy {
+        @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-navy-700 px-4 text-[15px] font-semibold text-white transition hover:bg-navy-800 focus:outline-none focus:ring-2 focus:ring-navy-500 focus:ring-offset-2 disabled:opacity-50;
+    }
+
+    /* Carrusel del login */
+    .slide-entrada {
+        animation: slide-entrada 0.6s ease;
+    }
+
+    @keyframes slide-entrada {
+        from {
+            opacity: 0;
+            transform: translateX(24px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+}

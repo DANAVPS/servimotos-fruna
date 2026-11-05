@@ -50,11 +50,11 @@
         <div class="mx-auto max-w-5xl space-y-6 sm:px-6 lg:px-8">
 
             @if(session('status'))
-                <div class="rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
+                <div class="rounded-lg bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
             @endif
 
             @if($orden->estado === 'pagada')
-                <div class="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+                <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
                     <strong>Orden ya pagada.</strong> Para corregir, cree una nueva orden.
                     @if($verDinero)
                         <span class="mt-1 block text-xs text-gray-500">
@@ -66,7 +66,7 @@
             @endif
 
             {{-- Datos principales --}}
-            <div class="rounded-lg bg-white p-6 shadow-sm">
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <dl class="grid grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-3">
                     <div>
                         <dt class="text-gray-500">Cliente</dt>
@@ -126,7 +126,7 @@
                     @if($orden->estado === 'terminada')
                         @can('liquidar', $orden)
                             <button type="button" @click="window.dispatchEvent(new CustomEvent('abrir-liquidacion', { detail: tarjeta }))"
-                                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                                    class="btn-primario">
                                 @if($usuario->can('emitirFactura', $orden))
                                     {{ $orden->numero_factura ? 'Emitir factura de nuevo' : 'Emitir factura' }}
                                 @else
@@ -139,13 +139,13 @@
                     @if($orden->estado === 'listo_para_reclamar')
                         @can('marcarPagada', $orden)
                             <button type="button" @click="window.dispatchEvent(new CustomEvent('abrir-pago', { detail: tarjeta }))"
-                                    class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500">
+                                    class="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500">
                                 Marcar como pagada
                             </button>
                         @endcan
                         @can('corregirFactura', $orden)
                             <button type="button" @click="window.dispatchEvent(new CustomEvent('abrir-correccion'))"
-                                    class="rounded-md border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100">
+                                    class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100">
                                 Corregir factura
                             </button>
                         @endcan
@@ -153,7 +153,7 @@
 
                     @if($orden->estaFacturada() && $usuario->can('verFactura', $orden))
                         <a href="{{ route('facturas.pdf', $orden) }}" target="_blank" rel="noopener"
-                           class="rounded-md border px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                           class="rounded-lg border px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                             Ver factura PDF
                         </a>
                     @endif
@@ -182,13 +182,13 @@
                         <p class="mt-3 text-sm text-gray-500">Sin repuestos.</p>
                     @endif
                     <h4 class="mt-4 text-sm font-medium text-gray-700">Observaciones técnicas</h4>
-                    <p class="mt-1 whitespace-pre-line rounded-md border-l-4 border-sky-400 bg-gray-50 p-3 text-sm text-gray-800">{{ $orden->observaciones_tecnicas }}</p>
+                    <p class="mt-1 whitespace-pre-line rounded-lg border-l-4 border-sky-400 bg-gray-50 p-3 text-sm text-gray-800">{{ $orden->observaciones_tecnicas }}</p>
                 </div>
             @endif
 
             {{-- Factura (totales congelados) --}}
             @if($orden->estaFacturada())
-                <div class="rounded-lg bg-white p-6 shadow-sm">
+                <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                     <h3 class="text-base font-semibold text-gray-900">Factura N.º {{ $orden->numero_factura }}</h3>
                     <p class="text-xs text-gray-500">Emitida el {{ $orden->liquidada_at?->timezone('America/Bogota')->format('d/m/Y h:i a') }}</p>
 
@@ -233,7 +233,7 @@
                     <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
                             <h4 class="text-sm font-medium text-gray-700">Observaciones técnicas</h4>
-                            <p class="mt-1 whitespace-pre-line rounded-md border-l-4 border-indigo-400 bg-gray-50 p-3 text-sm text-gray-800">{{ $orden->observaciones_tecnicas }}</p>
+                            <p class="mt-1 whitespace-pre-line rounded-lg border-l-4 border-indigo-400 bg-gray-50 p-3 text-sm text-gray-800">{{ $orden->observaciones_tecnicas }}</p>
                         </div>
                         @if($verDinero)
                         <dl class="space-y-1 text-sm sm:ml-auto sm:w-64">
@@ -255,7 +255,7 @@
             @endif
 
             {{-- Historial de estados --}}
-            <div class="rounded-lg bg-white p-6 shadow-sm">
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <h3 class="text-base font-semibold text-gray-900">Historial</h3>
                 <ol class="mt-4 space-y-4 border-l border-gray-200 pl-5">
                     @forelse($orden->historialEstados as $fila)
@@ -312,16 +312,16 @@
                         </p>
                         <label for="motivo" class="mt-4 block text-sm font-medium text-gray-700">Motivo de la corrección <span class="text-red-600">*</span></label>
                         <textarea id="motivo" name="motivo" x-ref="motivo" x-model="motivo" rows="3" maxlength="1000"
-                                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm"
                                   placeholder="Ej.: se facturaron 2 filtros y se usó 1."></textarea>
                         <p class="mt-1 text-xs" :class="motivo.trim().length >= 10 ? 'text-gray-400' : 'text-amber-700'"
                            x-text="`${motivo.trim().length}/10 caracteres mínimo`"></p>
                         <p x-show="errorMotivo" x-text="errorMotivo" class="mt-1 text-sm text-red-600" role="alert"></p>
                         <div class="mt-6 flex justify-end gap-3">
-                            <button type="button" @click="pasoMotivo = false" class="rounded-md border px-4 py-2 text-sm">Cancelar</button>
+                            <button type="button" @click="pasoMotivo = false" class="rounded-lg border px-4 py-2 text-sm">Cancelar</button>
                             <button type="button"
                                     @click="if (motivo.trim().length < 10) { errorMotivo = 'Describe el motivo con al menos 10 caracteres.'; return; } pasoMotivo = false; pedirPin()"
-                                    class="rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-500">
+                                    class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-500">
                                 Continuar con PIN
                             </button>
                         </div>

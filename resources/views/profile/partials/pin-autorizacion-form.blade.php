@@ -13,13 +13,13 @@
     </header>
 
     @if(session('status-pin'))
-        <div class="mt-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">{{ session('status-pin') }}</div>
+        <div class="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">{{ session('status-pin') }}</div>
     @endif
 
     @if(session('status') === 'pin-configurado')
-        <div class="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700">PIN configurado. Ya puedes editar clientes.</div>
+        <div class="mt-4 rounded-lg bg-green-50 p-3 text-sm text-green-700">PIN configurado. Ya puedes editar clientes.</div>
     @elseif(session('status') === 'pin-actualizado')
-        <div class="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700">PIN actualizado.</div>
+        <div class="mt-4 rounded-lg bg-green-50 p-3 text-sm text-green-700">PIN actualizado.</div>
     @endif
 
     <p class="mt-4 text-sm">

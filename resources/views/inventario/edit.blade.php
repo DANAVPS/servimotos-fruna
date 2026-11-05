@@ -2,7 +2,7 @@
     <x-slot name="header"><h2 class="text-xl font-semibold text-gray-800">Editar repuesto</h2></x-slot>
     <div class="py-6">
         <div class="mx-auto max-w-3xl space-y-6 sm:px-6 lg:px-8">
-            <div class="rounded-lg bg-white p-6 shadow-sm">
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <form method="POST" action="{{ route('inventario.update', $repuesto) }}">
                     @method('PUT')
                     @include('inventario._form')
@@ -26,7 +26,7 @@
                         Deja de aparecer en el inventario y ya no se puede vender. Las facturas anteriores lo siguen mostrando.
                     </p>
                     <button type="button" @click="abierto = true"
-                            class="mt-4 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500">
+                            class="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500">
                         Eliminar
                     </button>
 
@@ -40,7 +40,7 @@
                             @method('DELETE')
 
                             <h3 id="titulo-eliminar" class="text-lg font-semibold text-gray-900">¿Eliminar este repuesto?</h3>
-                            <p class="mt-2 rounded-md bg-gray-50 p-3 text-sm text-gray-800">
+                            <p class="mt-2 rounded-lg bg-gray-50 p-3 text-sm text-gray-800">
                                 <span class="font-semibold">{{ $repuesto->nombre }}</span>
                                 @if($repuesto->codigo_sku) <span class="text-gray-500">({{ $repuesto->codigo_sku }})</span> @endif
                                 <br><span class="text-gray-500">Stock actual: {{ $repuesto->stock_actual }}</span>
@@ -57,13 +57,13 @@
                             </label>
                             <input type="text" name="confirmacion" id="confirmacion" x-model="texto" autocomplete="off"
                                    x-effect="abierto && $nextTick(() => $el.focus())"
-                                   class="mt-1 block w-full rounded-md border-gray-300 font-mono shadow-sm">
+                                   class="mt-1 block w-full rounded-lg border-gray-300 font-mono shadow-sm">
                             @error('confirmacion') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
 
                             <div class="mt-6 flex justify-end gap-3">
-                                <button type="button" @click="cerrar()" class="rounded-md border px-4 py-2 text-sm">Cancelar</button>
+                                <button type="button" @click="cerrar()" class="rounded-lg border px-4 py-2 text-sm">Cancelar</button>
                                 <button type="submit" :disabled="! listo"
-                                        class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-40">
+                                        class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-40">
                                     Eliminar definitivamente
                                 </button>
                             </div>

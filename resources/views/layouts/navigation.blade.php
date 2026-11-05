@@ -1,182 +1,110 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('ordenes.kanban') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
+@php
+    $usuario = auth()->user();
+    $alertas = app(\App\Services\InventarioService::class)->repuestosConAlerta()->count();
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <!-- Enlace corregido al Dashboard -->
-                    @unless(auth()->user()->esMecanico())
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    @endunless
+    $iconos = [
+        'dashboard' => 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z',
+        'midia' => 'M4 5h16v16H4zM4 10h16M9 3v4M15 3v4',
+        'ordenes' => 'M9 3h6v3H9zM7 4.5H5V21h14V4.5h-2M8 11h8M8 15h8M8 19h5',
+        'inventario' => 'M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10',
+        'clientes' => 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 12 0v1M16 3.5a4 4 0 0 1 0 7M18 14a5 5 0 0 1 4 5v2',
+        'tipos' => 'M12 3l9 5-9 5-9-5zM3 13l9 5 9-5',
+        'mecanicos' => 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-.5-.5-2.5z',
+        'perfil' => 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21v-1a7 7 0 0 1 14 0v1',
+        'salir' => 'M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l-5-5 5-5M5 12h11',
+    ];
 
-                    <!-- Enlace a Órdenes Kanban -->
-                    @if(auth()->user()->esMecanico())
-                        <x-nav-link :href="route('mi-dia')" :active="request()->routeIs('mi-dia')">
-                            {{ __('Mi día') }}
-                        </x-nav-link>
-                    @endif
+    $grupos = [
+        'Operación' => [
+            ['label' => 'Dashboard', 'ruta' => 'dashboard', 'activo' => request()->routeIs('dashboard'), 'icono' => 'dashboard', 'visible' => ! $usuario->esMecanico()],
+            ['label' => 'Mi día', 'ruta' => 'mi-dia', 'activo' => request()->routeIs('mi-dia'), 'icono' => 'midia', 'visible' => $usuario->esMecanico()],
+            ['label' => 'Órdenes', 'ruta' => 'ordenes.kanban', 'activo' => request()->routeIs('ordenes.*', 'facturas.*'), 'icono' => 'ordenes', 'visible' => true],
+        ],
+        'Inventario' => [
+            ['label' => 'Inventario', 'ruta' => 'inventario.index', 'activo' => request()->routeIs('inventario.*', 'categorias.*', 'distribuidores.*'), 'icono' => 'inventario', 'visible' => true, 'alertas' => $alertas],
+        ],
+        'Clientes' => [
+            ['label' => 'Clientes', 'ruta' => 'clientes.index', 'activo' => request()->routeIs('clientes.*'), 'icono' => 'clientes', 'visible' => $usuario->can('viewAny', App\Models\Cliente::class)],
+            ['label' => 'Tipos de Cliente', 'ruta' => 'tipos-cliente.index', 'activo' => request()->routeIs('tipos-cliente.*'), 'icono' => 'tipos', 'visible' => $usuario->can('viewAny', App\Models\TipoCliente::class)],
+        ],
+        'Equipo' => [
+            ['label' => 'Mecánicos', 'ruta' => 'mecanicos.index', 'activo' => request()->routeIs('mecanicos.*'), 'icono' => 'mecanicos', 'visible' => $usuario->can('viewAny', App\Models\Mecanico::class)],
+        ],
+    ];
 
-                    <x-nav-link :href="route('ordenes.kanban')" :active="request()->routeIs('ordenes.*')">
-                        {{ __('Órdenes') }}
-                    </x-nav-link>
+    $iniciales = collect(preg_split('/\s+/', trim($usuario->name)))->filter()->take(2)->map(fn ($p) => mb_strtoupper(mb_substr($p, 0, 1)))->implode('');
+    $rolNombre = $usuario->rol?->nombre ?? ($usuario->esMecanico() ? 'Mecánico' : 'Administración');
+@endphp
 
-                    <x-nav-link :href="route('inventario.index')" :active="request()->routeIs('inventario.*', 'categorias.*', 'distribuidores.*')">
-                        {{ __('Inventario') }}
-                        @php($alertas = app(\App\Services\InventarioService::class)->repuestosConAlerta()->count())
-                        @if($alertas > 0)
-                            <span class="ms-1 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                                {{ $alertas }}
-                            </span>
-                        @endif
-                    </x-nav-link>
+<!-- Barra superior móvil -->
+<div class="sticky top-0 z-30 flex items-center justify-between gap-3 bg-navy-800 px-4 py-2 lg:hidden">
+    <a href="{{ route($usuario->esMecanico() ? 'mi-dia' : 'dashboard') }}" class="rounded-lg bg-white px-2 py-1">
+        <img src="{{ asset('images/logo-servimotos-fruna.png') }}" alt="Servimotos Fruna" class="h-9 w-auto">
+    </a>
+    <button type="button" @click="menuAbierto = ! menuAbierto" :aria-expanded="menuAbierto.toString()" aria-controls="menu-lateral"
+            class="inline-flex h-11 w-11 items-center justify-center rounded-lg text-white hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+        <span class="sr-only">Abrir menú</span>
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true">
+            <path x-show="! menuAbierto" d="M4 6h16M4 12h16M4 18h16" />
+            <path x-show="menuAbierto" x-cloak d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</div>
 
-                    @can('viewAny', App\Models\Cliente::class)
-                        <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
-                            {{ __('Clientes') }}
-                        </x-nav-link>
-                    @endcan
+<!-- Fondo oscuro del menú en móvil -->
+<div x-show="menuAbierto" x-cloak x-transition.opacity @click="menuAbierto = false" class="fixed inset-0 z-30 bg-navy-950/60 lg:hidden"></div>
 
-                    @can('viewAny', App\Models\TipoCliente::class)
-                        <x-nav-link :href="route('tipos-cliente.index')" :active="request()->routeIs('tipos-cliente.*')">
-                            {{ __('Tipos de Cliente') }}
-                        </x-nav-link>
-                    @endcan
+<!-- Menú lateral -->
+<nav id="menu-lateral" aria-label="Menú principal"
+     :class="menuAbierto ? 'translate-x-0' : '-translate-x-full'"
+     @keydown.escape.window="menuAbierto = false"
+     class="fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col gap-5 overflow-y-auto bg-navy-800 px-4 pb-5 pt-5 text-white transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:shrink-0">
 
-                    @can('viewAny', App\Models\Mecanico::class)
-                        <x-nav-link :href="route('mecanicos.index')" :active="request()->routeIs('mecanicos.*')">
-                            {{ __('Mecánicos') }}
-                        </x-nav-link>
-                    @endcan
-                </div>
-            </div>
+    <a href="{{ route($usuario->esMecanico() ? 'mi-dia' : 'dashboard') }}" class="flex justify-center rounded-xl bg-white px-3 py-2">
+        <img src="{{ asset('images/logo-servimotos-fruna.png') }}" alt="Servimotos Fruna" class="h-auto w-44">
+    </a>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
+    <div class="flex items-center gap-2 px-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-plata">
+        <span class="franja-roja h-4 w-2" aria-hidden="true"></span>
+        {{ $usuario->esMecanico() ? 'Panel mecánico' : 'Panel administrador' }}
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <!-- Enlace móvil corregido al Dashboard -->
-            @unless(auth()->user()->esMecanico())
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            @endunless
-
-            @if(auth()->user()->esMecanico())
-                <x-responsive-nav-link :href="route('mi-dia')" :active="request()->routeIs('mi-dia')">
-                    {{ __('Mi día') }}
-                </x-responsive-nav-link>
-            @endif
-
-            <x-responsive-nav-link :href="route('ordenes.kanban')" :active="request()->routeIs('ordenes.*')">
-                {{ __('Órdenes') }}
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('inventario.index')" :active="request()->routeIs('inventario.*', 'categorias.*', 'distribuidores.*')">
-                {{ __('Inventario') }}
-                @if($alertas > 0)
-                    <span class="ms-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                        {{ $alertas }}
-                    </span>
-                @endif
-            </x-responsive-nav-link>
-
-            @can('viewAny', App\Models\Cliente::class)
-                <x-responsive-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
-                    {{ __('Clientes') }}
-                </x-responsive-nav-link>
-            @endcan
-
-            @can('viewAny', App\Models\TipoCliente::class)
-                <x-responsive-nav-link :href="route('tipos-cliente.index')" :active="request()->routeIs('tipos-cliente.*')">
-                    {{ __('Tipos de Cliente') }}
-                </x-responsive-nav-link>
-            @endcan
-
-            @can('viewAny', App\Models\Mecanico::class)
-                <x-responsive-nav-link :href="route('mecanicos.index')" :active="request()->routeIs('mecanicos.*')">
-                    {{ __('Mecánicos') }}
-                </x-responsive-nav-link>
-            @endcan
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+    @foreach($grupos as $grupo => $items)
+        @php($visibles = array_filter($items, fn ($i) => $i['visible']))
+        @if(count($visibles))
+            <div class="flex flex-col gap-0.5">
+                <div class="nav-lateral-grupo">{{ $grupo }}</div>
+                @foreach($visibles as $item)
+                    <a href="{{ route($item['ruta']) }}" @class(['nav-lateral-item', 'activo' => $item['activo']]) @if($item['activo']) aria-current="page" @endif>
+                        <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ $iconos[$item['icono']] }}" /></svg>
+                        <span class="flex-1">{{ $item['label'] }}</span>
+                        @if(($item['alertas'] ?? 0) > 0)
+                            <span class="inline-flex min-w-[1.5rem] items-center justify-center rounded-full bg-brand-500 px-2 py-0.5 text-xs font-bold text-white" title="Repuestos con stock bajo">{{ $item['alertas'] }}</span>
+                        @endif
+                    </a>
+                @endforeach
             </div>
+        @endif
+    @endforeach
 
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
+    <div class="mt-auto flex flex-col gap-1 rounded-xl bg-white/5 p-3">
+        <div class="flex items-center gap-3 px-1 pb-2">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[15px] font-bold" aria-hidden="true">{{ $iniciales }}</span>
+            <div class="min-w-0">
+                <div class="truncate text-[15px] font-semibold">{{ $usuario->name }}</div>
+                <div class="truncate text-[13px] text-plata">{{ $rolNombre }}</div>
             </div>
         </div>
+        <a href="{{ route('profile.edit') }}" @class(['nav-lateral-item', 'activo' => request()->routeIs('profile.*')])>
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ $iconos['perfil'] }}" /></svg>
+            Mi perfil
+        </a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="nav-lateral-item w-full text-left">
+                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ $iconos['salir'] }}" /></svg>
+                Cerrar sesión
+            </button>
+        </form>
     </div>
 </nav>

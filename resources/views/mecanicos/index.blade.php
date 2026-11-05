@@ -4,7 +4,7 @@
             <h2 class="text-xl font-semibold leading-tight text-gray-800">Mecánicos</h2>
             @can('create', App\Models\Mecanico::class)
                 <a href="{{ route('mecanicos.create') }}"
-                   class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                   class="btn-primario">
                     + Nuevo mecánico
                 </a>
             @endcan
@@ -14,7 +14,7 @@
     <div class="py-6">
         <div class="mx-auto max-w-5xl space-y-4 sm:px-6 lg:px-8">
             @if(session('status'))
-                <div class="rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
+                <div class="rounded-lg bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
             @endif
 
             <p class="text-sm text-gray-600">
@@ -22,16 +22,16 @@
                 No se eliminan: desactívalos para que no aparezcan al asignar órdenes.
             </p>
 
-            <div class="overflow-x-auto rounded-lg bg-white shadow-sm">
+            <div class="overflow-x-auto rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Nombre</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Tipo</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Titular / Ayudantes</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Teléfono</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Usuario</th>
-                            <th class="px-4 py-2 text-center text-xs font-medium uppercase text-gray-500">Estado</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Nombre</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Tipo</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Titular / Ayudantes</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Teléfono</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Usuario</th>
+                            <th class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">Estado</th>
                             <th class="px-4 py-2"><span class="sr-only">Acciones</span></th>
                         </tr>
                     </thead>

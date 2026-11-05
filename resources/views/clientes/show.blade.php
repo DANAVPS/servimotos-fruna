@@ -19,13 +19,13 @@
                               x-data="formularioConPin()" @submit.prevent="pedirPin()">
                             @csrf
                             @include('partials.pin-modal', ['titulo' => "Reinscribir a {$cliente->nombre}"])
-                            <button type="submit" class="rounded-md border border-green-600 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
+                            <button type="submit" class="rounded-lg border border-green-600 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
                                 Reinscribir
                             </button>
                         </form>
                     @endif
                     <a href="{{ route('clientes.edit', $cliente) }}"
-                       class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Editar</a>
+                       class="btn-primario">Editar</a>
                 </div>
             @endcan
         </div>
@@ -35,10 +35,10 @@
         <div class="mx-auto max-w-4xl space-y-6 sm:px-6 lg:px-8">
 
             @if(session('status'))
-                <div class="rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
+                <div class="rounded-lg bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
             @endif
 
-            <div class="rounded-lg bg-white p-6 shadow-sm">
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <dl class="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
                     @if($verPrivado)
                         <div><dt class="text-gray-500">Teléfono</dt><dd class="font-medium">{{ $cliente->telefono }}</dd></div>
@@ -53,7 +53,7 @@
                 </dl>
             </div>
 
-            <div class="rounded-lg bg-white p-6 shadow-sm">
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <h3 class="mb-3 text-sm font-semibold text-gray-700">Motos registradas</h3>
                 <ul class="divide-y divide-gray-200">
                     @forelse($cliente->motos as $moto)
@@ -67,7 +67,7 @@
                 </ul>
             </div>
 
-            <div class="rounded-lg bg-white p-6 shadow-sm">
+            <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <h3 class="mb-3 text-sm font-semibold text-gray-700">Últimas órdenes de servicio</h3>
                 <ul class="divide-y divide-gray-200">
                     @forelse($cliente->ordenesServicio as $orden)

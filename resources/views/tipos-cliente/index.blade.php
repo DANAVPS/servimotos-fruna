@@ -6,7 +6,7 @@
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Tipos de cliente</h2>
             </div>
             <a href="{{ route('tipos-cliente.create') }}"
-               class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+               class="btn-primario">
                 + Nuevo tipo
             </a>
         </div>
@@ -15,10 +15,10 @@
     <div class="py-6">
         <div class="mx-auto max-w-4xl space-y-4 sm:px-6 lg:px-8">
             @if(session('status'))
-                <div class="rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
+                <div class="rounded-lg bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
             @endif
             @if(session('advertencia'))
-                <div class="rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">⚠ {{ session('advertencia') }}</div>
+                <div class="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">⚠ {{ session('advertencia') }}</div>
             @endif
 
             <p class="text-sm text-gray-600">
@@ -27,14 +27,14 @@
                 Los tipos no se eliminan: desactivados no se pueden asignar a clientes nuevos, pero quienes ya los tienen conservan su descuento.
             </p>
 
-            <div class="overflow-x-auto rounded-lg bg-white shadow-sm">
+            <div class="overflow-x-auto rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Tipo</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium uppercase text-gray-500">Descuento en repuestos</th>
-                            <th class="px-4 py-2 text-center text-xs font-medium uppercase text-gray-500">Clientes</th>
-                            <th class="px-4 py-2 text-center text-xs font-medium uppercase text-gray-500">Estado</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Tipo</th>
+                            <th class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Descuento en repuestos</th>
+                            <th class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">Clientes</th>
+                            <th class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">Estado</th>
                             <th class="px-4 py-2"><span class="sr-only">Acciones</span></th>
                         </tr>
                     </thead>
