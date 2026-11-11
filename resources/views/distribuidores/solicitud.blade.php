@@ -28,12 +28,12 @@
         <div class="mx-auto max-w-5xl space-y-4 sm:px-6 lg:px-8">
 
             @if($errors->any())
-                <div class="rounded-md bg-red-50 p-4 text-sm text-red-700">
+                <div class="rounded-lg bg-red-50 p-4 text-sm text-red-700">
                     @foreach($errors->all() as $error) <p>{{ $error }}</p> @endforeach
                 </div>
             @endif
 
-            <div class="rounded-lg bg-white p-4 text-sm text-gray-600 shadow-sm">
+            <div class="rounded-xl bg-white p-4 text-sm text-gray-600 shadow-sm ring-1 ring-gray-200">
                 <p>
                     <span class="font-medium text-gray-900">{{ $distribuidor->contacto ?? $distribuidor->nombre }}</span>
                     @if($distribuidor->telefono_whatsapp) · WhatsApp {{ $distribuidor->telefono_whatsapp }} @endif
@@ -48,7 +48,7 @@
                 @csrf
 
                 @if($preferidos->isEmpty() && $otros->isEmpty())
-                    <div class="rounded-lg bg-white p-8 text-center text-sm text-gray-500 shadow-sm">
+                    <div class="rounded-xl bg-white p-8 text-center text-sm text-gray-500 shadow-sm ring-1 ring-gray-200">
                         Este distribuidor no tiene repuestos en stock bajo.
                     </div>
                 @endif
@@ -59,7 +59,7 @@
                 ] as $seccion)
                     @continue($seccion['repuestos']->isEmpty())
 
-                    <div class="mb-4 overflow-x-auto rounded-lg bg-white shadow-sm">
+                    <div class="mb-4 overflow-x-auto rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
                         <div class="border-b px-4 py-3">
                             <h3 class="text-sm font-semibold text-gray-800">{{ $seccion['titulo'] }}</h3>
                             @if($seccion['nota']) <p class="text-xs text-gray-500">{{ $seccion['nota'] }}</p> @endif
@@ -67,12 +67,12 @@
                         <table class="min-w-full divide-y divide-gray-200 text-sm">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Repuesto</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Código proveedor</th>
-                                    <th class="px-4 py-2 text-center text-xs font-medium uppercase text-gray-500">Stock</th>
-                                    <th class="px-4 py-2 text-right text-xs font-medium uppercase text-gray-500">Costo unit.</th>
-                                    <th class="px-4 py-2 text-center text-xs font-medium uppercase text-gray-500">Cantidad</th>
-                                    <th class="px-4 py-2 text-right text-xs font-medium uppercase text-gray-500">Subtotal</th>
+                                    <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Repuesto</th>
+                                    <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Código proveedor</th>
+                                    <th class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">Stock</th>
+                                    <th class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Costo unit.</th>
+                                    <th class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">Cantidad</th>
+                                    <th class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
@@ -105,7 +105,7 @@
                                             <input type="number" min="0" max="9999" step="1"
                                                    name="cantidades[{{ $repuesto->id }}]"
                                                    x-model.number="cantidad[{{ $repuesto->id }}]"
-                                                   class="w-20 rounded-md border-gray-300 text-center text-sm shadow-sm">
+                                                   class="w-20 rounded-lg border-gray-300 text-center text-sm shadow-sm">
                                         </td>
                                         <td class="px-4 py-2 text-right text-gray-700" x-text="pesos(subtotal({{ $repuesto->id }}))"></td>
                                     </tr>
@@ -116,7 +116,7 @@
                 @endforeach
 
                 @if($preferidos->isNotEmpty() || $otros->isNotEmpty())
-                    <div class="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-white p-4 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200">
                         <p class="text-sm text-gray-700">
                             <span x-text="referencias"></span> referencias ·
                             <span x-text="unidades"></span> unidades ·
@@ -124,11 +124,11 @@
                         </p>
                         <div class="flex flex-wrap gap-2">
                             <button type="submit" :disabled="referencias === 0"
-                                    class="rounded-md bg-gray-800 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-40">
+                                    class="btn-navy disabled:opacity-40">
                                 Generar PDF de pedido
                             </button>
                             <button type="button" @click="generarWhatsapp()" :disabled="referencias === 0 || cargando"
-                                    class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500 disabled:opacity-40">
+                                    class="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500 disabled:opacity-40">
                                 <span x-show="! cargando">Generar texto WhatsApp</span>
                                 <span x-show="cargando" x-cloak>Generando…</span>
                             </button>
@@ -146,15 +146,15 @@
                 <h3 id="titulo-whatsapp" class="text-lg font-semibold text-gray-900">Mensaje para {{ $distribuidor->nombre }}</h3>
                 <p class="mt-1 text-xs text-gray-500">No incluye costos: el distribuidor confirma disponibilidad y precio.</p>
                 <textarea x-ref="texto" x-model="texto" rows="14" readonly
-                          class="mt-3 block w-full rounded-md border-gray-300 font-mono text-sm shadow-sm"></textarea>
+                          class="mt-3 block w-full rounded-lg border-gray-300 font-mono text-sm shadow-sm"></textarea>
                 <div class="mt-4 flex flex-wrap items-center justify-end gap-2">
                     <span x-show="copiado" x-cloak class="mr-auto text-sm text-green-700">✓ Copiado</span>
-                    <button type="button" @click="modal = false" class="rounded-md border px-4 py-2 text-sm">Cerrar</button>
+                    <button type="button" @click="modal = false" class="rounded-lg border px-4 py-2 text-sm">Cerrar</button>
                     <a x-show="enlace" x-cloak :href="enlace" target="_blank" rel="noopener"
-                       class="rounded-md border border-green-600 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
+                       class="rounded-lg border border-green-600 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50">
                         Abrir en WhatsApp
                     </a>
-                    <button type="button" @click="copiar()" class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500">
+                    <button type="button" @click="copiar()" class="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500">
                         Copiar
                     </button>
                 </div>

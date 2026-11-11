@@ -16,7 +16,7 @@
             @can('create', App\Models\OrdenServicio::class)
                 {{-- Fuera de x-data: onclick nativo. --}}
                 <button type="button" onclick="window.dispatchEvent(new CustomEvent('abrir-crear-orden'))"
-                        class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                        class="btn-primario">
                     + Crear orden manual
                 </button>
             @endcan
@@ -44,7 +44,7 @@
 
             <div x-show="aviso" x-transition x-cloak role="status"
                  :class="aviso?.tipo === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'"
-                 class="mb-4 rounded-md p-4 text-sm" x-text="aviso?.texto"></div>
+                 class="mb-4 rounded-lg p-4 text-sm" x-text="aviso?.texto"></div>
 
             <div class="flex gap-4 overflow-x-auto pb-4">
                 @foreach($columnas as $estado)
@@ -86,7 +86,7 @@
                             <span x-text="transicion.tarjeta.cliente"></span>
                         </p>
 
-                        <div x-show="transicion.errores.length" class="mt-3 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
+                        <div x-show="transicion.errores.length" class="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
                             <template x-for="error in transicion.errores" :key="error"><p x-text="error"></p></template>
                         </div>
 
@@ -94,7 +94,7 @@
                             <div class="mt-4">
                                 <label for="transicion-mecanico" class="block text-sm font-medium text-gray-700">Mecánico que la revisa <span class="text-red-600">*</span></label>
                                 <select id="transicion-mecanico" x-model="transicion.mecanicoId" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                                     <option value="">Selecciona…</option>
                                     <optgroup label="Titulares">
                                         <template x-for="m in mecanicos.filter((m) => m.tipo === 'titular')" :key="m.id">
@@ -119,13 +119,13 @@
                             </label>
                             <textarea id="transicion-observaciones" rows="3" x-model="transicion.observaciones" maxlength="1000"
                                       :required="transicion.pideMecanico"
-                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                                      class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm"></textarea>
                         </div>
 
                         <div class="mt-6 flex justify-end gap-3">
-                            <button type="button" @click="cancelarTransicion()" class="rounded-md border px-4 py-2 text-sm">Cancelar</button>
+                            <button type="button" @click="cancelarTransicion()" class="rounded-lg border px-4 py-2 text-sm">Cancelar</button>
                             <button type="submit" :disabled="transicion.enviando"
-                                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-50"
+                                    class="btn-primario disabled:opacity-50"
                                     x-text="transicion.enviando ? 'Guardando…' : 'Confirmar'"></button>
                         </div>
                     </div>
@@ -221,7 +221,7 @@
                         `<button type="button" data-accion="${accion}" data-id="${t.id}" class="mt-2 w-full rounded px-2 py-1 text-xs font-semibold ${clases}">${texto}</button>`;
 
                     return `
-                        <article class="kanban-card rounded-md border border-l-4 border-gray-200 bg-white p-3 shadow-sm ${t.semaforo ? BORDE_SEMAFORO[t.semaforo] : ''} ${arrastrable ? 'arrastrable cursor-move' : ''}"
+                        <article class="kanban-card rounded-lg border border-l-4 border-gray-200 bg-white p-3 shadow-sm ${t.semaforo ? BORDE_SEMAFORO[t.semaforo] : ''} ${arrastrable ? 'arrastrable cursor-move' : ''}"
                                  data-id="${t.id}">
                             <div class="flex items-start justify-between gap-2">
                                 <a href="${e(t.url)}" class="font-mono text-sm font-semibold text-gray-900 hover:text-indigo-700">${e(t.placa)}</a>

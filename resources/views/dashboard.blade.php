@@ -13,7 +13,7 @@
             <h2 class="text-xl font-semibold text-gray-800">Dashboard</h2>
             {{-- Fuera de x-data: onclick nativo. --}}
             <button type="button" onclick="window.dispatchEvent(new CustomEvent('abrir-crear-orden'))"
-                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                    class="btn-primario">
                 + Crear orden manual
             </button>
         </div>
@@ -26,7 +26,7 @@
 
             {{-- Filtro de periodo (una sola fila arriba) + estado de la actualización --}}
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="inline-flex rounded-md shadow-sm" role="group" aria-label="Periodo">
+                <div class="inline-flex rounded-lg shadow-sm" role="group" aria-label="Periodo">
                     <button type="button" @click="cambiarPeriodo('semanal')"
                             :class="periodo === 'semanal' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'"
                             :aria-pressed="periodo === 'semanal'"
@@ -46,7 +46,7 @@
 
             {{-- Indicadores principales --}}
             <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Indicadores">
-                <div class="rounded-lg bg-white p-5 shadow-sm">
+                <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
                     <p class="text-sm text-gray-500">Caja <span x-text="d.periodo.etiqueta.toLowerCase()"></span></p>
                     <p class="mt-1 text-3xl font-bold text-gray-900" x-text="pesos(d.caja.total)"></p>
                     <p class="mt-1 text-xs text-gray-500">
@@ -58,7 +58,7 @@
                     </dl>
                 </div>
 
-                <a href="{{ route('ordenes.kanban') }}" class="block rounded-lg bg-white p-5 shadow-sm hover:ring-2 hover:ring-indigo-200">
+                <a href="{{ route('ordenes.kanban') }}" class="block rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:ring-2 hover:ring-indigo-200">
                     <p class="text-sm text-gray-500">Cuentas por cobrar</p>
                     <p class="mt-1 text-3xl font-bold text-gray-900" x-text="pesos(d.por_cobrar.total)"></p>
                     <p class="mt-1 text-xs text-gray-500"
@@ -67,7 +67,7 @@
                        x-text="`La más antigua lleva ${d.por_cobrar.dias_mas_antigua} ${d.por_cobrar.dias_mas_antigua === 1 ? 'día' : 'días'} sin pagar`"></p>
                 </a>
 
-                <div class="rounded-lg bg-white p-5 shadow-sm">
+                <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
                     <p class="text-sm text-gray-500">Motos en riesgo</p>
                     <div class="mt-2 flex items-end gap-6">
                         <div>
@@ -87,7 +87,7 @@
                     </div>
                 </div>
 
-                <div class="rounded-lg bg-white p-5 shadow-sm">
+                <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
                     <p class="text-sm text-gray-500">Descuentos otorgados</p>
                     <p class="mt-1 text-3xl font-bold text-gray-900" x-text="pesos(totalDescuentos)"></p>
                     <p class="mt-1 text-xs text-gray-500">En repuestos, a clientes con tipo especial.</p>
@@ -96,7 +96,7 @@
 
             <section class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {{-- Métodos de pago --}}
-                <div class="rounded-lg bg-white p-5 shadow-sm">
+                <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
                     <h3 class="text-sm font-semibold text-gray-900">Caja por método de pago</h3>
                     <ul class="mt-4 space-y-3">
                         <template x-for="m in d.metodos_pago" :key="m.clave">
@@ -118,7 +118,7 @@
                 </div>
 
                 {{-- Mano de obra vs repuestos --}}
-                <div class="rounded-lg bg-white p-5 shadow-sm">
+                <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
                     <h3 class="text-sm font-semibold text-gray-900">Ingresos: mano de obra vs repuestos</h3>
                     <ul class="mt-4 space-y-3">
                         <template x-for="fila in [{ etiqueta: 'Mano de obra', valor: d.ingresos.mano_obra }, { etiqueta: 'Repuestos', valor: d.ingresos.repuestos }]" :key="fila.etiqueta">
@@ -142,7 +142,7 @@
 
             <section class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {{-- Rendimiento de mecánicos --}}
-                <div class="rounded-lg bg-white p-5 shadow-sm">
+                <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
                     <h3 class="text-sm font-semibold text-gray-900">Mano de obra por mecánico</h3>
                     <p class="text-xs text-gray-500">Base para comisiones: mano de obra de órdenes pagadas en el periodo.</p>
                     <table class="mt-3 w-full text-sm">
@@ -175,7 +175,7 @@
                 </div>
 
                 {{-- Descuentos por tipo de cliente --}}
-                <div class="rounded-lg bg-white p-5 shadow-sm">
+                <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
                     <h3 class="text-sm font-semibold text-gray-900">Descuentos por tipo de cliente</h3>
                     <table class="mt-3 w-full text-sm">
                         <thead>
@@ -208,7 +208,7 @@
                 <ul class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
                     <template x-for="o in d.riesgo.lista" :key="o.id">
                         <li>
-                            <a :href="o.url" class="block rounded-md border border-l-4 border-gray-200 border-l-red-500 p-3 text-sm hover:bg-red-50">
+                            <a :href="o.url" class="block rounded-lg border border-l-4 border-gray-200 border-l-red-500 p-3 text-sm hover:bg-red-50">
                                 <span class="font-mono font-semibold text-gray-900" x-text="o.placa"></span>
                                 <span class="float-right text-xs font-medium text-red-700" x-text="`${o.dias} días`"></span>
                                 <span class="block text-xs text-gray-600" x-text="`${o.estado}${o.mecanico ? ' · ' + o.mecanico : ''}`"></span>
@@ -220,7 +220,7 @@
 
             <section class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {{-- Bitácora --}}
-                <div class="rounded-lg bg-white p-5 shadow-sm">
+                <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
                     <h3 class="text-sm font-semibold text-gray-900">Últimas órdenes pagadas</h3>
                     <ul class="mt-3 divide-y">
                         <template x-for="o in d.bitacora" :key="o.id">
@@ -242,7 +242,7 @@
                 </div>
 
                 {{-- Stock crítico por distribuidor --}}
-                <div class="rounded-lg bg-white p-5 shadow-sm">
+                <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
                     <div class="flex items-center justify-between">
                         <h3 class="text-sm font-semibold text-gray-900">Stock crítico</h3>
                         <a href="{{ route('inventario.index') }}" class="text-xs text-indigo-600 hover:underline">Ver inventario</a>
@@ -258,7 +258,7 @@
                                               x-text="`${g.repuestos.length} bajo el mínimo${g.agotados ? ` · ${g.agotados} ${g.agotados === 1 ? 'agotado' : 'agotados'}` : ''}`"></span>
                                     </p>
                                     <a x-show="g.url_solicitud" :href="g.url_solicitud"
-                                       class="shrink-0 rounded-md border border-indigo-200 px-2.5 py-1 text-xs font-semibold text-indigo-700 hover:bg-indigo-50">
+                                       class="shrink-0 rounded-lg border border-indigo-200 px-2.5 py-1 text-xs font-semibold text-indigo-700 hover:bg-indigo-50">
                                         Solicitar pedido
                                     </a>
                                 </div>

@@ -25,7 +25,7 @@
                 <legend class="text-sm font-medium text-gray-700">¿Cómo pagó el cliente?</legend>
                 <div class="mt-2 grid grid-cols-2 gap-2">
                     @foreach(App\Models\OrdenServicio::METODOS_PAGO as $valor => $etiqueta)
-                        <label class="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm"
+                        <label class="flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm"
                                :class="metodo === @js($valor) ? 'border-indigo-500 bg-indigo-50 text-indigo-900' : 'border-gray-300'">
                             <input type="radio" name="metodo_pago" value="{{ $valor }}" x-model="metodo" class="text-indigo-600">
                             {{ $etiqueta }}
@@ -38,9 +38,9 @@
             <p x-show="error" x-text="error" x-cloak class="mt-3 text-sm text-red-600" role="alert"></p>
 
             <div class="mt-6 flex justify-end gap-3">
-                <button type="button" @click="cerrar()" class="rounded-md border px-4 py-2 text-sm">Cancelar</button>
+                <button type="button" @click="cerrar()" class="rounded-lg border px-4 py-2 text-sm">Cancelar</button>
                 <button type="submit" :disabled="enviando || ! metodo"
-                        class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500 disabled:opacity-40">
+                        class="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500 disabled:opacity-40">
                     <span x-show="! enviando">Confirmar pago</span>
                     <span x-show="enviando" x-cloak>Guardando…</span>
                 </button>

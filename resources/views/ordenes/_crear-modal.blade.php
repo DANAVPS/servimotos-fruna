@@ -21,7 +21,7 @@
             </div>
 
             <div class="space-y-4 px-6 py-4">
-                <div x-show="errores.length" class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
+                <div x-show="errores.length" class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
                     <ul class="list-inside list-disc">
                         <template x-for="error in errores" :key="error"><li x-text="error"></li></template>
                     </ul>
@@ -30,10 +30,10 @@
                 <div class="flex gap-2 text-sm">
                     <button type="button" @click="modo = 'existente'"
                             :class="modo === 'existente' ? 'bg-indigo-600 text-white' : 'border text-gray-700'"
-                            class="rounded-md px-3 py-1.5">Cliente registrado</button>
+                            class="rounded-lg px-3 py-1.5">Cliente registrado</button>
                     <button type="button" @click="modo = 'nuevo'; cliente = null"
                             :class="modo === 'nuevo' ? 'bg-indigo-600 text-white' : 'border text-gray-700'"
-                            class="rounded-md px-3 py-1.5">Cliente nuevo</button>
+                            class="rounded-lg px-3 py-1.5">Cliente nuevo</button>
                 </div>
 
                 {{-- Cliente registrado --}}
@@ -43,11 +43,11 @@
                             <label for="buscar-cliente" class="block text-sm font-medium text-gray-700">Buscar cliente</label>
                             <input type="search" id="buscar-cliente" x-model="busqueda" @input.debounce.300ms="buscar()"
                                    placeholder="{{ App\Support\TarjetaOrden::veDinero(auth()->user()) ? 'Nombre, teléfono, cédula/NIT o placa' : 'Nombre o placa' }}" autocomplete="off"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                   class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                             <p x-show="sinResultados" class="mt-1 text-xs text-gray-500">
                                 No se encontró. <button type="button" class="text-indigo-600 underline" @click="modo = 'nuevo'">Registrar cliente nuevo</button>
                             </p>
-                            <div x-show="resultados.length" class="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-white shadow-lg">
+                            <div x-show="resultados.length" class="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border bg-white shadow-lg">
                                 <template x-for="c in resultados" :key="c.id">
                                     <button type="button" @click="elegir(c)" class="block w-full px-3 py-2 text-left text-sm hover:bg-indigo-50">
                                         <span class="font-medium text-gray-900" x-text="c.nombre"></span>
@@ -61,7 +61,7 @@
 
                     <template x-if="cliente">
                         <div class="space-y-3">
-                            <div class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 text-sm">
+                            <div class="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm">
                                 <span>
                                     <span class="font-medium text-gray-900" x-text="cliente.nombre"></span>
                                     <span class="ml-1 text-xs text-gray-500" x-show="cliente.tipo_cliente" x-text="cliente.tipo_cliente?.nombre"></span>
@@ -95,56 +95,56 @@
                     <div class="sm:col-span-2">
                         <label for="nuevo-nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
                         <input type="text" id="nuevo-nombre" x-model="nuevoCliente.nombre" maxlength="255"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                     </div>
                     <div>
                         <label for="nuevo-telefono" class="block text-sm font-medium text-gray-700">Celular</label>
                         <input type="tel" id="nuevo-telefono" x-model="nuevoCliente.telefono" placeholder="300 123 4567"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                     </div>
                     <div>
                         <label for="nuevo-cedula" class="block text-sm font-medium text-gray-700">Cédula / NIT <span class="text-gray-400">(opcional)</span></label>
                         <input type="text" id="nuevo-cedula" x-model="nuevoCliente.cedula_nit"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                     </div>
                     <p class="text-xs text-gray-500 sm:col-span-2">Se registra como cliente Regular. La administradora puede cambiar el tipo después.</p>
                 </div>
 
                 {{-- Moto nueva --}}
-                <div x-show="necesitaMotoNueva" class="grid grid-cols-1 gap-3 rounded-md border border-dashed p-3 sm:grid-cols-4">
+                <div x-show="necesitaMotoNueva" class="grid grid-cols-1 gap-3 rounded-lg border border-dashed p-3 sm:grid-cols-4">
                     <div>
                         <label for="moto-placa" class="block text-sm font-medium text-gray-700">Placa</label>
                         <input type="text" id="moto-placa" x-model="moto.placa" placeholder="ABC12D" maxlength="7"
-                               class="mt-1 block w-full rounded-md border-gray-300 font-mono uppercase shadow-sm">
+                               class="mt-1 block w-full rounded-lg border-gray-300 font-mono uppercase shadow-sm">
                     </div>
                     <div>
                         <label for="moto-marca" class="block text-sm font-medium text-gray-700">Marca</label>
                         <input type="text" id="moto-marca" x-model="moto.marca" maxlength="100"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                     </div>
                     <div>
                         <label for="moto-modelo" class="block text-sm font-medium text-gray-700">Modelo</label>
                         <input type="text" id="moto-modelo" x-model="moto.modelo" maxlength="100"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                     </div>
                     <div>
                         <label for="moto-anio" class="block text-sm font-medium text-gray-700">Año</label>
                         <input type="number" id="moto-anio" x-model="moto.anio" min="1950"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                     </div>
                 </div>
 
                 <div>
                     <label for="descripcion-falla" class="block text-sm font-medium text-gray-700">Falla reportada por el cliente</label>
                     <textarea id="descripcion-falla" rows="2" x-model="descripcionFalla" maxlength="1000"
-                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm"></textarea>
                 </div>
             </div>
 
             <div class="flex justify-end gap-3 border-t px-6 py-4">
-                <button type="button" @click="cerrar()" class="rounded-md border px-4 py-2 text-sm">Cancelar</button>
+                <button type="button" @click="cerrar()" class="rounded-lg border px-4 py-2 text-sm">Cancelar</button>
                 <button type="submit" :disabled="enviando || ! listo"
-                        class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-40">
+                        class="btn-primario disabled:opacity-40">
                     <span x-show="! enviando">Crear orden</span>
                     <span x-show="enviando" x-cloak>Creando…</span>
                 </button>

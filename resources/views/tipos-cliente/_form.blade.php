@@ -15,12 +15,12 @@
             <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
             <input type="text" name="nombre" id="nombre" value="{{ old('nombre', $tipoCliente->nombre) }}" required maxlength="100"
                    placeholder="Ej. Distribuidor, Flota empresarial"
-                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                   class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
             @error('nombre') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
         <div>
             <label for="descuento_repuestos_pct" class="block text-sm font-medium text-gray-700">Descuento en repuestos</label>
-            <div class="mt-1 flex rounded-md shadow-sm">
+            <div class="mt-1 flex rounded-lg shadow-sm">
                 <input type="text" inputmode="decimal" name="descuento_repuestos_pct" id="descuento_repuestos_pct"
                        x-model="porcentaje" @input.debounce.400ms="analizar()" required
                        class="block w-full rounded-l-md border-gray-300 text-right">
@@ -33,7 +33,7 @@
             <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción <span class="font-normal text-gray-400">(opcional)</span></label>
             <textarea name="descripcion" id="descripcion" rows="2" maxlength="1000"
                       placeholder="A quién aplica y por qué"
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">{{ old('descripcion', $tipoCliente->descripcion) }}</textarea>
+                      class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">{{ old('descripcion', $tipoCliente->descripcion) }}</textarea>
             @error('descripcion') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
@@ -53,13 +53,13 @@
     </div>
 
     {{-- Bloqueo: fuera de rango --}}
-    <div x-show="fueraDeRango" x-cloak class="mt-4 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800">
+    <div x-show="fueraDeRango" x-cloak class="mt-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
         El descuento debe estar entre 0% y 100%. Más de 100% dejaría precios negativos.
     </div>
 
     {{-- Advertencia: repuestos bajo el costo --}}
     <div x-show="! fueraDeRango && analisis && analisis.bajo_costo > 0" x-cloak
-         class="mt-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+         class="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
         <p class="font-semibold">
             ⚠ Este descuento deja <span x-text="analisis?.bajo_costo"></span>
             de <span x-text="analisis?.total_repuestos"></span> repuestos por debajo del costo.
@@ -82,9 +82,9 @@
     </p>
 
     <div class="mt-6 flex justify-end gap-3">
-        <a href="{{ route('tipos-cliente.index') }}" class="rounded-md border px-4 py-2 text-sm">Cancelar</a>
+        <a href="{{ route('tipos-cliente.index') }}" class="rounded-lg border px-4 py-2 text-sm">Cancelar</a>
         <button type="submit" :disabled="fueraDeRango"
-                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40">
+                class="btn-primario disabled:cursor-not-allowed disabled:opacity-40">
             Guardar
         </button>
     </div>

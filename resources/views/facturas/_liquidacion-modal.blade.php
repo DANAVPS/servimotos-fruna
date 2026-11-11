@@ -46,7 +46,7 @@
             </div>
 
             <div class="space-y-5 px-6 py-4">
-                <div x-show="errores.length" class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
+                <div x-show="errores.length" class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
                     <ul class="list-inside list-disc">
                         <template x-for="error in errores" :key="error"><li x-text="error"></li></template>
                     </ul>
@@ -58,9 +58,9 @@
                     <div class="relative mt-1">
                         <input type="search" id="buscar-repuesto" x-model="busqueda" @input.debounce.300ms="buscar()"
                                placeholder="Buscar por nombre, código o moto (mín. 2 letras)" autocomplete="off"
-                               class="block w-full rounded-md border-gray-300 shadow-sm">
+                               class="block w-full rounded-lg border-gray-300 shadow-sm">
                         <div x-show="resultados.length" @click.outside="resultados = []"
-                             class="absolute z-10 mt-1 max-h-64 w-full overflow-y-auto rounded-md border bg-white shadow-lg">
+                             class="absolute z-10 mt-1 max-h-64 w-full overflow-y-auto rounded-lg border bg-white shadow-lg">
                             <template x-for="r in resultados" :key="r.id">
                                 <button type="button" @click="agregar(r)" :disabled="! r.disponible"
                                         class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-50">
@@ -103,7 +103,7 @@
                                     </td>
                                     <td class="py-2 text-center">
                                         <input type="number" min="1" :max="item.stock" x-model.number="item.cantidad"
-                                               class="w-20 rounded-md border-gray-300 text-center text-sm shadow-sm" aria-label="Cantidad">
+                                               class="w-20 rounded-lg border-gray-300 text-center text-sm shadow-sm" aria-label="Cantidad">
                                     </td>
                                     @if($verDinero)
                                         <td class="py-2 text-right">
@@ -130,7 +130,7 @@
                         <div class="relative mt-1">
                             <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500">$</span>
                             <input type="number" id="mano-obra" min="0" step="1" x-model.number="manoObra" required
-                                   class="block w-full rounded-md border-gray-300 pl-7 shadow-sm">
+                                   class="block w-full rounded-lg border-gray-300 pl-7 shadow-sm">
                         </div>
                     </div>
                     @endif
@@ -140,13 +140,13 @@
                         </label>
                         <textarea id="observaciones-tecnicas" rows="3" x-model="observaciones" required minlength="5" maxlength="5000"
                                   placeholder="Qué se encontró y qué se hizo. Aparece en la factura del cliente."
-                                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm"></textarea>
                     </div>
                 </div>
 
                 {{-- Vista previa de totales (el servidor recalcula). Solo administrativos. --}}
                 @if($verDinero)
-                <div class="ml-auto w-full max-w-xs rounded-md bg-gray-50 p-3 text-sm">
+                <div class="ml-auto w-full max-w-xs rounded-lg bg-gray-50 p-3 text-sm">
                     <dl class="space-y-1">
                         <div class="flex justify-between"><dt class="text-gray-600">Repuestos</dt><dd x-text="Servimotos.pesos(totales.repuestosLista)"></dd></div>
                         <div class="flex justify-between text-emerald-700" x-show="totales.descuento > 0">
@@ -169,9 +169,9 @@
             </div>
 
             <div class="flex justify-end gap-3 border-t px-6 py-4">
-                <button type="button" @click="cerrar()" class="rounded-md border px-4 py-2 text-sm">Cancelar</button>
+                <button type="button" @click="cerrar()" class="rounded-lg border px-4 py-2 text-sm">Cancelar</button>
                 <button type="submit" :disabled="enviando"
-                        class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-50">
+                        class="btn-primario disabled:opacity-50">
                     <span x-show="! enviando">{{ $verDinero ? 'Emitir factura' : 'Registrar trabajo' }}</span>
                     <span x-show="enviando" x-cloak>Guardando…</span>
                 </button>

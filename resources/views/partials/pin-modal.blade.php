@@ -11,7 +11,7 @@
     incorrecto (403) se muestre aquí sin perder lo que se escribió. El PIN se
     borra del componente tras cada intento y nunca se guarda en sesión.
 --}}
-<div x-show="errores.length" x-cloak class="mb-4 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
+<div x-show="errores.length" x-cloak class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
     <p class="font-semibold">Revisa estos datos:</p>
     <ul class="mt-1 list-inside list-disc">
         <template x-for="error in errores" :key="error"><li x-text="error"></li></template>
@@ -19,7 +19,7 @@
 </div>
 
 @error('pin_autorizacion')
-    <div class="mb-4 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">{{ $message }}</div>
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">{{ $message }}</div>
 @enderror
 
 <div x-show="modal" x-cloak @keydown.escape.window="cerrar()"
@@ -32,15 +32,15 @@
         <input type="password" name="pin_autorizacion" x-ref="pin" x-model="pin"
                inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"
                @keydown.enter.prevent="confirmar()"
-               class="mt-4 block w-full rounded-md border-gray-300 text-center font-mono text-2xl tracking-[0.5em] shadow-sm"
+               class="mt-4 block w-full rounded-lg border-gray-300 text-center font-mono text-2xl tracking-[0.5em] shadow-sm"
                aria-label="PIN de autorización">
 
         <p x-show="error" x-text="error" x-cloak class="mt-2 text-sm text-red-600" role="alert"></p>
 
         <div class="mt-6 flex justify-end gap-3">
-            <button type="button" @click="cerrar()" class="rounded-md border px-4 py-2 text-sm">Cancelar</button>
+            <button type="button" @click="cerrar()" class="rounded-lg border px-4 py-2 text-sm">Cancelar</button>
             <button type="button" @click="confirmar()" :disabled="enviando || bloqueado"
-                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-40">
+                    class="btn-primario disabled:opacity-40">
                 <span x-show="! enviando">Autorizar</span>
                 <span x-show="enviando" x-cloak>Verificando…</span>
             </button>

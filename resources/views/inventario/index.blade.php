@@ -12,15 +12,15 @@
             @if($puedeGestionar)
                 <div class="flex flex-wrap gap-2">
                     <a href="{{ route('distribuidores.index') }}"
-                       class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                       class="btn-secundario">
                         Distribuidores
                     </a>
                     <a href="{{ route('categorias.index') }}"
-                       class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                       class="btn-secundario">
                         Categorías
                     </a>
                     <a href="{{ route('inventario.create') }}"
-                       class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                       class="btn-primario">
                         + Agregar repuesto
                     </a>
                 </div>
@@ -32,7 +32,7 @@
         <div class="mx-auto max-w-7xl space-y-4 sm:px-6 lg:px-8">
 
             @if(session('status'))
-                <div class="rounded-md bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
+                <div class="rounded-lg bg-green-50 p-4 text-sm text-green-700">{{ session('status') }}</div>
             @endif
 
             {{-- Alertas de stock bajo agrupadas por distribuidor --}}
@@ -55,7 +55,7 @@
                                     ? $grupo['repuestos']->first()->distribuidores->firstWhere('id', $distribuidor->id)?->pivot->tiempo_entrega_dias
                                     : null;
                             @endphp
-                            <div class="flex flex-col rounded-md border border-red-100 bg-white p-4">
+                            <div class="flex flex-col rounded-lg border border-red-100 bg-white p-4">
                                 <div class="mb-2 flex items-start justify-between gap-2">
                                     <div>
                                         <p class="text-sm font-semibold text-gray-900">
@@ -90,7 +90,7 @@
                                 @if($puedePedir)
                                     @if($distribuidor)
                                         <a href="{{ route('distribuidores.solicitud', $distribuidor) }}"
-                                           class="rounded-md bg-red-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-red-500">
+                                           class="rounded-lg bg-red-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-red-500">
                                             Solicitar repuestos a este distribuidor
                                         </a>
                                     @else
@@ -106,20 +106,20 @@
             @endif
 
             {{-- Buscador --}}
-            <div class="rounded-lg bg-white p-4 shadow-sm">
+            <div class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200">
                 <form method="GET" class="flex flex-wrap items-end gap-3">
                     <div class="min-w-[200px] flex-1">
                         <label for="buscar" class="block text-sm font-medium text-gray-700">Buscar</label>
                         <input type="search" name="buscar" id="buscar" value="{{ $buscar }}" autofocus
                                placeholder="Nombre, marca, SKU, referencia o moto (ej. Duke 200)"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                     </div>
                     <div class="flex items-center gap-2 pb-2">
                         <input type="checkbox" name="solo_stock_bajo" id="solo_stock_bajo" value="1"
                                @checked($soloStockBajo) class="rounded border-gray-300">
                         <label for="solo_stock_bajo" class="text-sm text-gray-700">Solo stock bajo</label>
                     </div>
-                    <button type="submit" class="rounded-md bg-gray-800 px-4 py-2 text-sm text-white">Filtrar</button>
+                    <button type="submit" class="btn-navy">Filtrar</button>
                     @if($filtrando)
                         <a href="{{ route('inventario.index') }}" class="px-2 py-2 text-sm text-gray-600 hover:text-gray-900">Limpiar</a>
                     @endif
@@ -150,7 +150,7 @@
                 @php
                     $bajos = $grupo['repuestos']->filter->estaEnStockBajo()->count();
                 @endphp
-                <details data-categoria class="group overflow-hidden rounded-lg bg-white shadow-sm" @if($filtrando) open @endif>
+                <details data-categoria class="group overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200" @if($filtrando) open @endif>
                     <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 hover:bg-gray-50">
                         <span class="flex items-center gap-2">
                             <span class="text-gray-400 transition group-open:rotate-90">▸</span>
@@ -168,14 +168,14 @@
                         <table class="min-w-full divide-y divide-gray-200 text-sm">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Repuesto</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Sirve para</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Ubicación</th>
+                                    <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Repuesto</th>
+                                    <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Sirve para</th>
+                                    <th class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Ubicación</th>
                                     @if($verCostos)
-                                        <th class="px-4 py-2 text-right text-xs font-medium uppercase text-gray-500">Costo</th>
+                                        <th class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Costo</th>
                                     @endif
-                                    <th class="px-4 py-2 text-right text-xs font-medium uppercase text-gray-500">Precio venta</th>
-                                    <th class="px-4 py-2 text-center text-xs font-medium uppercase text-gray-500">Stock</th>
+                                    <th class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Precio venta</th>
+                                    <th class="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">Stock</th>
                                     @if($puedeGestionar)
                                         <th class="px-4 py-2"><span class="sr-only">Acciones</span></th>
                                     @endif
@@ -213,7 +213,7 @@
                     </div>
                 </details>
             @empty
-                <div class="rounded-lg bg-white p-8 text-center text-sm text-gray-500 shadow-sm">
+                <div class="rounded-xl bg-white p-8 text-center text-sm text-gray-500 shadow-sm ring-1 ring-gray-200">
                     @if($filtrando)
                         No hay repuestos que coincidan con la búsqueda.
                     @else
